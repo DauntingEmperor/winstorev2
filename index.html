@@ -157,7 +157,8 @@
             }
         }
         .search-bar {
-            margin: 20px;
+            margin
+: 20px;
             text-align: center;
         }
         .search-bar input {
@@ -171,6 +172,15 @@
         .search-bar input:focus {
             box-shadow: 0 0 10px rgba(0, 120, 215, 0.5);
             outline: none;
+        }
+        #top-10 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .top-app {
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -207,6 +217,111 @@
 </div>
 
 <!-- Analytics section -->
-<div class="container" style="display: flex; flex-direction: column; align-items: center;">
+<div id="top-10">
     <h2>Top 10</h2>
-    <div id="top-10" class="container"></
+    <!-- Top 10 app list will be dynamically added here -->
+</div>
+
+<footer>
+    <p>&copy; 2024 Windows App Store. All rights reserved.</p>
+</footer>
+
+<script>
+    let appsData = [];
+
+    // Fetch JSON data from the GitHub repository
+    fetch('https://raw.githubusercontent.com/DauntingEmperor/winsource/main/source/v2source.json')
+        .then(response => response.json())
+        .then(data => {
+            appsData = data;
+            renderApps('All');
+            renderTop10();
+        })
+        .catch(error => {
+            console.error('Error fetching app data:', error);
+        });
+
+    // Modal functions
+    function openModal(app) {
+        const modal = document.getElementById('appModal');
+        document.getElementById('modal-app-name').textContent = app.name;
+        document.getElementById('modal-download-link').href = app.download_link;
+        document.getElementById('modal-app-icon').src = app.app_icon;
+        document.getElementById('modal-app-description').textContent = app.description;
+
+        const screenshotsContainer = document.getElementById('modal-screenshots');
+        screenshotsContainer.innerHTML = '';
+        app.screenshots.forEach(screenshot => {
+            const img = document.createElement('img');
+            img.src = screenshot;
+            screenshotsContainer.appendChild(img);
+        });
+
+        modal.style.display = 'block';
+    }
+
+    // Close the modal
+    const modal = document.getElementById('appModal');
+    const span = document.getElementsByClassName('close')[0];
+    span.onclick = function() {
+        modal.style.display = 'none';
+    }
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Render apps based on category
+    function renderApps(category) {
+        const appContainer = document.getElementById('app-container');
+        appContainer.innerHTML = '';
+        appsData.forEach(app => {
+            if (category === 'All' || app.tabs.includes(category)) {
+                const appCard = document.createElement('div');
+                appCard.className = 'app-card';
+                appCard.innerHTML = `
+                    <h3>${app.name}</h3>
+                    <img src="${app.app_icon}" alt="${app.name} icon">
+                    <p>${app.description}</p>
+                    <a href="${app.download_link}" class="download-button">Download</a>
+                `;
+                appCard.addEventListener('click', () => {
+                    openModal(app);
+                });
+                appContainer.appendChild(appCard);
+            }
+        });
+    }
+
+    // Render top 10 apps
+    function renderTop10() {
+        const top10Container = document.getElementById('top-10');
+        const top10Apps = appsData.sort((a, b) => b.downloads - a.downloads).slice(0, 10);
+        top10Apps.forEach(app => {
+            const appElement = document.createElement('div');
+            appElement.className = 'top-app';
+            appElement.innerHTML = `
+                <h3>${app.name}</h3>
+                <p>Downloads: ${app.downloads}</p>
+            `;
+            top10Container.appendChild(appElement);
+        });
+    }
+
+    // Navigation
+    const tabs = ['All', 'Trending', 'Games', 'Utility', 'Other'];
+    const navigation = document.getElementById('navigation');
+    tabs.forEach(tab => {
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = tab;
+        link.addEventListener('click', () => {
+            renderApps(tab);
+        });
+        navigation.appendChild(link);
+    });
+</script>
+
+</body>
+</html>
