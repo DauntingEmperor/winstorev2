@@ -173,7 +173,7 @@
             outline: none;
         }
         #top-10 {
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
             padding: 20px;
@@ -199,6 +199,10 @@
 
 <div class="container" id="app-container">
     <!-- Your app cards here -->
+</div>
+
+<div id="top-10" class="container">
+    <!-- Top 10 apps will be rendered here -->
 </div>
 
 <!-- The Modal -->
@@ -228,7 +232,9 @@
         .then(response => response.json())
         .then(data => {
             appsData = data;
-            renderApps('All');
+            const currentTab = getCurrentTabFromURL();
+            renderApps(currentTab);
+            setActiveTab(currentTab);
         })
         .catch(error => {
             console.error('Error fetching app data:', error);
@@ -271,7 +277,7 @@
         const appContainer = document.getElementById('app-container');
         appContainer.innerHTML = '';
         appsData.forEach(app => {
-            if (category === 'All' || app.tabs.includes(category)) {
+            if (category === 'All' || app.category === category || (category === 'Trending' && app.isTrending)) {
                 const appCard = document.createElement('div');
                 appCard.className = 'app-card';
                 appCard.innerHTML = `
@@ -294,6 +300,9 @@
         } else {
             top10Container.style.display = 'none';
         }
+
+        // Update URL to reflect the current tab
+        history.pushState(null, null, `/${category.toLowerCase()}`);
     }
 
     // Render top 10 apps
@@ -322,6 +331,7 @@
         link.addEventListener('click', (e) => {
             e.preventDefault();
             renderApps(tab);
+            setActiveTab(tab);
         });
         navigation.appendChild(link);
     });
@@ -347,6 +357,22 @@
             appContainer.appendChild(appCard);
         });
     });
+
+    // Set active tab based on current URL
+    function getCurrentTabFromURL() {
+        const path = window.location.pathname.replace('/', '');
+        const tab = tabs.find(t => t.toLowerCase() === path);
+        return tab || 'All';
+    }
+
+    function setActiveTab(tab) {
+        document.querySelectorAll('nav a').forEach(link => {
+            link.classList.remove('active');
+            if (link.textContent === tab) {
+                link.classList.add('active');
+            }
+        });
+    }
 </script>
 
 </body>
