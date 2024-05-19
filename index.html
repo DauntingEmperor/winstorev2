@@ -157,8 +157,7 @@
             }
         }
         .search-bar {
-            margin
-: 20px;
+            margin: 20px;
             text-align: center;
         }
         .search-bar input {
@@ -213,13 +212,8 @@
         <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px;">
         <p id="modal-app-description"></p>
         <div id="modal-screenshots"></div>
+        <p id="modal-app-downloads"></p>
     </div>
-</div>
-
-<!-- Analytics section -->
-<div id="top-10">
-    <h2>Top 10</h2>
-    <!-- Top 10 app list will be dynamically added here -->
 </div>
 
 <footer>
@@ -235,7 +229,6 @@
         .then(data => {
             appsData = data;
             renderApps('All');
-            renderTop10();
         })
         .catch(error => {
             console.error('Error fetching app data:', error);
@@ -248,6 +241,7 @@
         document.getElementById('modal-download-link').href = app.download_link;
         document.getElementById('modal-app-icon').src = app.app_icon;
         document.getElementById('modal-app-description').textContent = app.description;
+        document.getElementById('modal-app-downloads').textContent = `Downloads: ${app.downloads}`;
 
         const screenshotsContainer = document.getElementById('modal-screenshots');
         screenshotsContainer.innerHTML = '';
@@ -292,11 +286,20 @@
                 appContainer.appendChild(appCard);
             }
         });
+
+        const top10Container = document.getElementById('top-10');
+        if (category === 'Trending') {
+            renderTop10();
+            top10Container.style.display = 'flex';
+        } else {
+            top10Container.style.display = 'none';
+        }
     }
 
     // Render top 10 apps
     function renderTop10() {
         const top10Container = document.getElementById('top-10');
+        top10Container.innerHTML = '<h2>Top 10</h2>';
         const top10Apps = appsData.sort((a, b) => b.downloads - a.downloads).slice(0, 10);
         top10Apps.forEach(app => {
             const appElement = document.createElement('div');
@@ -316,10 +319,33 @@
         const link = document.createElement('a');
         link.href = '#';
         link.textContent = tab;
-        link.addEventListener('click', () => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
             renderApps(tab);
         });
         navigation.appendChild(link);
+    });
+
+    // Handle search
+    document.getElementById('search-input').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filteredApps = appsData.filter(app => app.name.toLowerCase().includes(query) || app.description.toLowerCase().includes(query));
+        const appContainer = document.getElementById('app-container');
+        appContainer.innerHTML = '';
+        filteredApps.forEach(app => {
+            const appCard = document.createElement('div');
+            appCard.className = 'app-card';
+            appCard.innerHTML = `
+                <h3>${app.name}</h3>
+                <img src="${app.app_icon}" alt="${app.name} icon">
+                <p>${app.description}</p>
+                <a href="${app.download_link}" class="download-button">Download</a>
+            `;
+            appCard.addEventListener('click', () => {
+                openModal(app);
+            });
+            appContainer.appendChild(appCard);
+        });
     });
 </script>
 
