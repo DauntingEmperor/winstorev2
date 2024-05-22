@@ -124,6 +124,12 @@
             max-width: 100%;
             border-radius: 10px;
             margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .modal-body img.expanded {
+            width: auto;
+            max-width: 90%;
+            max-height: 90vh;
         }
         .close {
             color: #aaa;
@@ -172,15 +178,6 @@
             box-shadow: 0 0 10px rgba(0, 120, 215, 0.5);
             outline: none;
         }
-        #top-10 {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        .top-app {
-            margin-bottom: 10px;
-        }
     </style>
 </head>
 <body>
@@ -201,10 +198,6 @@
     <!-- Your app cards here -->
 </div>
 
-<div id="top-10" class="container">
-    <!-- Top 10 apps will be rendered here -->
-</div>
-
 <!-- The Modal -->
 <div id="appModal" class="modal">
     <div class="modal-content">
@@ -216,7 +209,6 @@
         <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px;">
         <p id="modal-app-description"></p>
         <div id="modal-screenshots"></div>
-        <p id="modal-app-downloads"></p>
     </div>
 </div>
 
@@ -232,9 +224,8 @@
         .then(response => response.json())
         .then(data => {
             appsData = data;
-            const currentTab = getCurrentTabFromURL();
-            renderApps(currentTab);
-            setActiveTab(currentTab);
+            renderApps('All');
+            handleRouting();
         })
         .catch(error => {
             console.error('Error fetching app data:', error);
@@ -247,13 +238,15 @@
         document.getElementById('modal-download-link').href = app.download_link;
         document.getElementById('modal-app-icon').src = app.app_icon;
         document.getElementById('modal-app-description').textContent = app.description;
-        document.getElementById('modal-app-downloads').textContent = `Downloads: ${app.downloads}`;
 
         const screenshotsContainer = document.getElementById('modal-screenshots');
         screenshotsContainer.innerHTML = '';
         app.screenshots.forEach(screenshot => {
             const img = document.createElement('img');
             img.src = screenshot;
+            img.addEventListener('click', () => {
+                img.classList.toggle('expanded');
+            });
             screenshotsContainer.appendChild(img);
         });
 
@@ -277,100 +270,86 @@
         const appContainer = document.getElementById('app-container');
         appContainer.innerHTML = '';
         appsData.forEach(app => {
-            if (category === 'All' || app.category === category || (category === 'Trending' && app.isTrending)) {
+            if (category === 'All' || app.tabs.includes(category)) {
                 const appCard = document.createElement('div');
                 appCard.className = 'app-card';
                 appCard.innerHTML = `
-                    <h3>${app.name}</h3>
-                    <img src="${app.app_icon}" alt="${app.name} icon">
+                    <img src="${app.app_icon}" alt="${app.name}">
+                    <h3>${app.name} <span>${app.downloads} Downloads</span></h3>
                     <p>${app.description}</p>
-                    <a href="${app.download_link}" class="download-button">Download</a>
+                    <button class="download-button" onclick="updateDownloadCount('${app.id}')">Download</button>
                 `;
-                appCard.addEventListener('click', () => {
-                    openModal(app);
-                });
+                appCard.addEventListener('click', () => openModal(app));
                 appContainer.appendChild(appCard);
             }
         });
-
-        const top10Container = document.getElementById('top-10');
-        if (category === 'Trending') {
-            renderTop10();
-            top10Container.style.display = 'flex';
-        } else {
-            top10Container.style.display = 'none';
-        }
-
-        // Update URL to reflect the current tab
-        history.pushState(null, null, `/${category.toLowerCase()}`);
     }
+
+    // Update download count
+    async function updateDownloadCount(appId) {
+        await fetch('/.netlify/functions/triggerGitHubAction', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ appId })
+        });
+    }
+
+    // Handle navigation
+    const navLinks = [
+        { name: 'Home', path: 'winstorev2/home' },
+        { name: 'Trending', path: 'winstorev2/trending' },
+        { name: 'Games', path: 'winstorev2/games' },
+        { name: 'Productivity', path: 'winstorev2/productivity' },
+    ];
+
+    function renderNav() {
+        const nav = document.getElementById('navigation');
+        nav.innerHTML = '';
+        navLinks.forEach(link => {
+            const a = document.createElement('a');
+            a.href = `/${link.path}`;
+            a.textContent = link.name;
+            a.addEventListener('click', (event) => {
+                event.preventDefault();
+                window.history.pushState(null, '', `/${link.path}`);
+                handleRouting();
+            });
+            nav.appendChild(a);
+        });
+    }
+
+    function handleRouting() {
+        const path = window.location.pathname.split('/').pop();
+        const category = path ? path : 'home';
+        if (category === 'trending') {
+            renderTop10();
+        } else {
+            renderApps(category.charAt(0).toUpperCase() + category.slice(1));
+        }
+    }
+
+    window.onpopstate = handleRouting;
+
+    renderNav();
 
     // Render top 10 apps
     function renderTop10() {
-        const top10Container = document.getElementById('top-10');
-        top10Container.innerHTML = '<h2>Top 10</h2>';
-        const top10Apps = appsData.sort((a, b) => b.downloads - a.downloads).slice(0, 10);
-        top10Apps.forEach(app => {
-            const appElement = document.createElement('div');
-            appElement.className = 'top-app';
-            appElement.innerHTML = `
-                <h3>${app.name}</h3>
-                <p>Downloads: ${app.downloads}</p>
-            `;
-            top10Container.appendChild(appElement);
-        });
-    }
-
-    // Navigation
-    const tabs = ['All', 'Trending', 'Games', 'Utility', 'Other'];
-    const navigation = document.getElementById('navigation');
-    tabs.forEach(tab => {
-        const link = document.createElement('a');
-        link.href = '#';
-        link.textContent = tab;
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            renderApps(tab);
-            setActiveTab(tab);
-        });
-        navigation.appendChild(link);
-    });
-
-    // Handle search
-    document.getElementById('search-input').addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase();
-        const filteredApps = appsData.filter(app => app.name.toLowerCase().includes(query) || app.description.toLowerCase().includes(query));
         const appContainer = document.getElementById('app-container');
         appContainer.innerHTML = '';
-        filteredApps.forEach(app => {
+        const top10 = appsData.sort((a, b) => b.downloads - a.downloads).slice(0, 10);
+        top10.forEach(app => {
             const appCard = document.createElement('div');
             appCard.className = 'app-card';
             appCard.innerHTML = `
-                <h3>${app.name}</h3>
-                <img src="${app.app_icon}" alt="${app.name} icon">
+                <img src="${app.app_icon}" alt="${app.name}">
+                <h3>${app.name} <span>${app.downloads} Downloads</span></h3>
                 <p>${app.description}</p>
-                <a href="${app.download_link}" class="download-button">Download</a>
+                <button class="download-button" onclick="updateDownloadCount('${app.id}')">Download</button>
             `;
-            appCard.addEventListener('click', () => {
-                openModal(app);
-            });
+            appCard.addEventListener('click', () => openModal(app));
             appContainer.appendChild(appCard);
-        });
-    });
-
-    // Set active tab based on current URL
-    function getCurrentTabFromURL() {
-        const path = window.location.pathname.replace('/', '');
-        const tab = tabs.find(t => t.toLowerCase() === path);
-        return tab || 'All';
-    }
-
-    function setActiveTab(tab) {
-        document.querySelectorAll('nav a').forEach(link => {
-            link.classList.remove('active');
-            if (link.textContent === tab) {
-                link.classList.add('active');
-            }
         });
     }
 </script>
