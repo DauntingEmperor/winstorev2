@@ -108,10 +108,11 @@
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: 5% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
+            max-width: 800px;
             border-radius: 15px;
             transition: transform 0.3s;
         }
@@ -119,17 +120,17 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: 20px;
         }
         .modal-body img {
             max-width: 100%;
             border-radius: 10px;
             margin-bottom: 10px;
             cursor: pointer;
+            transition: transform 0.3s;
         }
         .modal-body img.expanded {
-            width: auto;
-            max-width: 90%;
-            max-height: 90vh;
+            transform: scale(1.5);
         }
         .close {
             color: #aaa;
@@ -206,7 +207,7 @@
             <h3 id="modal-app-name"></h3>
             <a id="modal-download-link" class="download-button">Download</a>
         </div>
-        <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px;">
+        <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px; border-radius: 10px;">
         <p id="modal-app-description"></p>
         <div id="modal-screenshots"></div>
     </div>
@@ -225,7 +226,7 @@
         .then(data => {
             appsData = data;
             renderApps('All');
-            handleRouting();
+            setupNavigation();
         })
         .catch(error => {
             console.error('Error fetching app data:', error);
@@ -244,6 +245,7 @@
         app.screenshots.forEach(screenshot => {
             const img = document.createElement('img');
             img.src = screenshot;
+            img.style.borderRadius = '10px';
             img.addEventListener('click', () => {
                 img.classList.toggle('expanded');
             });
@@ -270,7 +272,7 @@
         const appContainer = document.getElementById('app-container');
         appContainer.innerHTML = '';
         appsData.forEach(app => {
-            if (category === 'All' || app.tabs.includes(category)) {
+            if (category === 'All' || app.category === category) {
                 const appCard = document.createElement('div');
                 appCard.className = 'app-card';
                 appCard.innerHTML = `
@@ -287,7 +289,7 @@
 
     // Update download count
     async function updateDownloadCount(appId) {
-        await fetch('/.netlify/functions/triggerGitHubAction', {
+        await fetch('https://<YOUR_SERVERLESS_FUNCTION_URL>', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -298,41 +300,30 @@
 
     // Handle navigation
     const navLinks = [
-        { name: 'Home', path: 'winstorev2/home' },
-        { name: 'Trending', path: 'winstorev2/trending' },
-        { name: 'Games', path: 'winstorev2/games' },
-        { name: 'Productivity', path: 'winstorev2/productivity' },
+        { name: 'All', path: 'all' },
+        { name: 'Trending', path: 'trending' },
+        { name: 'Games', path: 'games' },
+        { name: 'Productivity', path: 'productivity' },
     ];
 
-    function renderNav() {
+    function setupNavigation() {
         const nav = document.getElementById('navigation');
         nav.innerHTML = '';
         navLinks.forEach(link => {
             const a = document.createElement('a');
-            a.href = `/${link.path}`;
+            a.href = '#';
             a.textContent = link.name;
             a.addEventListener('click', (event) => {
                 event.preventDefault();
-                window.history.pushState(null, '', `/${link.path}`);
-                handleRouting();
+                if (link.name === 'Trending') {
+                    renderTop10();
+                } else {
+                    renderApps(link.name);
+                }
             });
             nav.appendChild(a);
         });
     }
-
-    function handleRouting() {
-        const path = window.location.pathname.split('/').pop();
-        const category = path ? path : 'home';
-        if (category === 'trending') {
-            renderTop10();
-        } else {
-            renderApps(category.charAt(0).toUpperCase() + category.slice(1));
-        }
-    }
-
-    window.onpopstate = handleRouting;
-
-    renderNav();
 
     // Render top 10 apps
     function renderTop10() {
