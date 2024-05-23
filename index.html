@@ -6,77 +6,93 @@
     <title>Windows App Store</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
         }
         header {
-            background: #0078d7;
+            background: linear-gradient(135deg, #0078D7, #005A9E);
             color: white;
-            padding: 1rem;
+            padding: 20px;
             text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         nav {
             display: flex;
-            background: #333;
-            justify-content: center;
-            padding: 0.5rem 0;
+            justify-content: space-around;
+            background-color: #004C87;
+            padding: 10px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         nav a {
             color: white;
-            margin: 0 1rem;
             text-decoration: none;
-            padding: 0.5rem 1rem;
+            padding: 10px 20px;
+            transition: background-color 0.3s, transform 0.3s;
         }
         nav a:hover {
-            background: #575757;
+            background-color: #005A9E;
             border-radius: 5px;
-        }
-        .search-bar {
-            display: flex;
-            justify-content: center;
-            margin: 1rem 0;
-        }
-        .search-bar input {
-            width: 50%;
-            padding: 0.5rem;
-            font-size: 1rem;
+            transform: translateY(-2px);
         }
         .container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 1rem;
-            padding: 1rem;
+            padding: 20px;
         }
         .app-card {
-            background: #f4f4f4;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            padding: 1rem;
-            text-align: center;
-            width: 200px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            width: calc(30% - 40px);
+            display: inline-block;
+            vertical-align: top;
             cursor: pointer;
-        }
-        .app-card img {
-            border-radius: 10px;
-            width: 100px;
-            height: 100px;
+            position: relative;
         }
         .app-card:hover {
-            background: #e4e4e4;
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            background-color: #f0f0f0;
+        }
+        .app-card img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+        .app-card h3 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+        .app-card p {
+            color: #555;
         }
         .download-button {
-            background: #0078d7;
-            border: none;
-            border-radius: 5px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #0078D7;
             color: white;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
             cursor: pointer;
-            padding: 0.5rem 1rem;
-            margin-top: 0.5rem;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s;
         }
         .download-button:hover {
-            background: #005bb5;
+            background-color: #005A9E;
+            transform: translateY(-2px);
         }
         .modal {
             display: none;
@@ -87,23 +103,33 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgb(0, 0, 0);
             background-color: rgba(0, 0, 0, 0.4);
-            padding-top: 60px;
+            transition: opacity 0.3s;
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 5% auto;
+            margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
-            max-width: 500px;
+            border-radius: 15px;
+            transition: transform 0.3s;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-body img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
         }
         .close {
             color: #aaa;
-            float: right;
             font-size: 28px;
             font-weight: bold;
+            cursor: pointer;
         }
         .close:hover,
         .close:focus {
@@ -111,270 +137,40 @@
             text-decoration: none;
             cursor: pointer;
         }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-body {
-            text-align: center;
-        }
-        .settings-menu {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #0078d7;
-            border-radius: 50%;
-            padding: 1rem;
-            cursor: pointer;
-        }
-        .settings-menu svg {
-            fill: white;
-            width: 24px;
-            height: 24px;
-        }
-        .settings-dropdown {
-            display: none;
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background: #fefefe;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            padding: 1rem;
-            width: 200px;
-        }
-        .settings-dropdown label {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-        .settings-dropdown select,
-        .settings-dropdown input {
-            width: 100%;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .settings-dropdown.show {
-            display: block;
-        }
         footer {
-            background: #333;
+            background-color: #333;
             color: white;
-            padding: 1rem;
             text-align: center;
-            position: fixed;
+            padding: 10px;
+            position: relative;
             width: 100%;
             bottom: 0;
         }
-        /* Dark theme */
-        body.dark {
-            background-color: #121212;
-            color: #e0e0e0;
+        @media (max-width: 800px) {
+            .app-card {
+                width: calc(45% - 40px);
+            }
         }
-        body.dark header {
-            background: #1e1e1e;
+        @media (max-width: 500px) {
+            .app-card {
+                width : calc(100% - 40px);
+            }
         }
-        body.dark nav {
-            background: #1e1e1e;
+        .search-bar {
+            margin: 20px;
+            text-align: center;
         }
-        body.dark nav a {
-            color: #e0e0e0;
+        .search-bar input {
+            width: 50%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            transition: box-shadow 0.3s;
         }
-        body.dark nav a:hover {
-            background: #333;
-        }
-        body.dark .app-card {
-            background: #1e1e1e;
-            color: #e0e0e0;
-        }
-        body.dark .app-card:hover {
-            background: #333;
-        }
-        body.dark .modal-content {
-            background: #1e1e1e;
-            color: #e0e0e0;
-        }
-        body.dark .download-button {
-            background: #333;
-        }
-        body.dark .download-button:hover {
-            background: #444;
-        }
-        /* Bloodmoon theme */
-        body.blood {
-            background-color: #330000;
-            color: #ffcccc;
-        }
-        body.blood header {
-            background: linear-gradient(135deg, #550000, #660000);
-        }
-        body.blood nav {
-            background-color: #550000;
-        }
-        body.blood nav a {
-            color: #ffcccc;
-        }
-        body.blood nav a:hover {
-            background-color: #660000;
-        }
-        body.blood .app-card {
-            background-color: #660000;
-            color: #ffcccc;
-        }
-        body.blood .app-card:hover {
-            background-color: #770000;
-        }
-        body.blood .modal-content {
-            background-color: #660000;
-            color: #ffcccc;
-        }
-        body.blood .download-button {
-            background-color: #880000;
-            color: #ffcccc;
-        }
-        body.blood .download-button:hover {
-            background-color: #990000;
-        }
-        /* Haze theme */
-        body.haze {
-            background-color: #330033;
-            color: #ffccff;
-        }
-        body.haze header {
-            background: linear-gradient(135deg, #550055, #660066);
-        }
-        body.haze nav {
-            background-color: #550055;
-        }
-        body.haze nav a {
-            color: #ffccff;
-        }
-        body.haze nav a:hover {
-            background-color: #660066;
-        }
-        body.haze .app-card {
-            background-color: #660066;
-            color: #ffccff;
-        }
-        body.haze .app-card:hover {
-            background-color: #770077;
-        }
-        body.haze .modal-content {
-            background-color: #660066;
-            color: #ffccff;
-        }
-        body.haze .download-button {
-            background-color: #880088;
-            color: #ffccff;
-        }
-        body.haze .download-button:hover {
-            background-color: #990099;
-        }
-        /* Sky theme */
-        body.sky {
-            background-color: #003366;
-            color: #cceeff;
-        }
-        body.sky header {
-            background: linear-gradient(135deg, #0055aa, #0066cc);
-        }
-        body.sky nav {
-            background-color: #0055aa;
-        }
-        body.sky nav a {
-            color: #cceeff;
-        }
-        body.sky nav a:hover {
-            background-color: #0066cc;
-        }
-        body.sky .app-card {
-            background-color: #0066cc;
-            color: #cceeff;
-        }
-        body.sky .app-card:hover {
-            background-color: #0077dd;
-        }
-        body.sky .modal-content {
-            background-color: #0066cc;
-            color: #cceeff;
-        }
-        body.sky .download-button {
-            background-color: #0088ee;
-            color: #cceeff;
-        }
-        body.sky .download-button:hover {
-            background-color: #0099ff;
-        }
-        /* Dirt theme */
-        body.dirt {
-            background-color: #3b2f2f;
-            color: #f4e3c2;
-        }
-        body.dirt header {
-            background: linear-gradient(135deg, #4e3d3d, #6a5252);
-        }
-        body.dirt nav {
-            background-color: #4e3d3d;
-        }
-        body.dirt nav a {
-            color: #f4e3c2;
-        }
-        body.dirt nav a:hover {
-            background-color: #6a5252;
-        }
-        body.dirt .app-card {
-            background-color: #6a5252;
-            color: #f4e3c2;
-        }
-        body.dirt .app-card:hover {
-            background-color: #7d6565;
-        }
-        body.dirt .modal-content {
-            background-color: #6a5252;
-            color: #f4e3c2;
-        }
-        body.dirt .download-button {
-            background-color: #8b7373;
-            color: #f4e3c2;
-        }
-        body.dirt .download-button:hover {
-            background-color: #9e8686;
-        }
-        /* Lime theme */
-        body.lime {
-            background-color: #004d00;
-            color: #ccffcc;
-        }
-        body.lime header {
-            background: linear-gradient(135deg, #007a00, #009900);
-        }
-        body.lime nav {
-            background-color: #007a00;
-        }
-        body.lime nav a {
-            color: #ccffcc;
-        }
-        body.lime nav a:hover {
-            background-color: #009900;
-        }
-        body.lime .app-card {
-            background-color: #009900;
-            color: #ccffcc;
-        }
-        body.lime .app-card:hover {
-            background-color: #00b300;
-        }
-        body.lime .modal-content {
-            background-color: #009900;
-            color: #ccffcc;
-        }
-        body.lime .download-button {
-            background-color: #00cc00;
-            color: #ccffcc;
-        }
-        body.lime .download-button:hover {
-            background-color: #00e600;
+        .search-bar input:focus {
+            box-shadow: 0 0 10px rgba(0, 120, 215, 0.5);
+            outline: none;
         }
     </style>
 </head>
@@ -384,18 +180,16 @@
     <h1>Windows App Store</h1>
 </header>
 
-<nav>
-    <a href="#">Home</a>
-    <a href="#">Web</a>
-    <a href="#">Categories</a>
+<nav id="navigation">
+    <!-- Navigation items will be dynamically added here -->
 </nav>
 
 <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Search for apps...">
+    <input type="text" id="search-input" placeholder="Search for apps...">
 </div>
 
 <div class="container" id="app-container">
-    <!-- App cards will be appended here -->
+    <!-- Your app cards here -->
 </div>
 
 <!-- The Modal -->
@@ -403,167 +197,136 @@
     <div class="modal-content">
         <span class="close">&times;</span>
         <div class="modal-header">
-            <h2 id="modalAppName"></h2>
+            <h3 id="modal-app-name"></h3>
+            <a id="modal-download-link" class="download-button">Download</a>
         </div>
-        <div class="modal-body">
-            <img id="modalAppIcon" src="" alt="App Icon">
-            <p id="modalAppDescription"></p>
-            <div id="modalAppScreenshots"></div>
-            <button id="modalDownloadButton" class="download-button">Download</button>
-        </div>
+        <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px;">
+        <p id="modal-app-description"></p>
+        <div id="modal-screenshots"></div>
     </div>
 </div>
 
-<div class="settings-menu" id="settingsMenu">
-    <svg viewBox="0 0 24 24">
-        <path d="M12,8A4,4 0 1,0 16,12A4,4 0 0,0 12,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M4.93,13H3.05V11H4.93C5.19,10.11 5.57,9.28 6.05,8.55L4.22,6.73L5.64,5.3L7.46,7.12C8.19,6.64 9.03,6.26 9.91,6L10.81,3.05H13.19L14.09,6C14.97,6.26 15.81,6.64 16.54,7.12L18.36,5.3L19.78,6.73L17.95,8.55C18.43,9.28 18.81,10.11 19.07,11H20.95V13H19.07C18.81,13.89 18.43,14.72 17.95,15.45L19.78,17.27L18.36,18.7L16.54,16.88C15.81,17.36 14.97,17.74 14.09,18L13.19,20.95H10.81L9.91,18C9.03,17.74 8.19,17.36 7.46,16.88L5.64,18.7L4.22,17.27L6.05,15.45C5.57,14.72 5.19,13.89 4.93,13Z" />
-    </svg>
-</div>
-
-<div class="settings-dropdown" id="settingsDropdown">
-    <label for="themeSelect">Theme:</label>
-    <select id="themeSelect">
-        <option value="default">Default</option>
-        <option value="dark">Dark</option>
-        <option value="blood">Bloodmoon</option>
-        <option value="haze">Haze</option>
-        <option value="sky">Sky</option>
-        <option value="dirt">Dirt</option>
-        <option value="lime">Lime</option>
-    </select>
-    <label>
-        <input type="checkbox" id="adminCheckbox"> Hide admin apps
-    </label>
-</div>
-
 <footer>
-    <p>&copy; 2023 Windows App Store</p>
+    <p>&copy; 2024 Windows App Store. All rights reserved.</p>
 </footer>
 
 <script>
-    const apps = [
-        {
-            "name": "App 1",
-            "description": "Description for App 1",
-            "link": "https://example.com/app1",
-            "icon": "https://via.placeholder.com/100",
-            "screenshots": [
-                "https://via.placeholder.com/400x300",
-                "https://via.placeholder.com/400x300"
-            ],
-            "admin": false
-        },
-        {
-            "name": "App 2",
-            "description": "Description for App 2",
-            "link": "https://example.com/app2",
-            "icon": "https://via.placeholder.com/100",
-            "screenshots": [
-                "https://via.placeholder.com/400x300",
-                "https://via.placeholder.com/400x300"
-            ],
-            "admin": true
-        }
-    ];
+    let appsData = [];
 
-<script>
-    const appContainer = document.getElementById('app-container');
-    const searchInput = document.getElementById('searchInput');
-    const appModal = document.getElementById('appModal');
-    const modalAppName = document.getElementById('modalAppName');
-    const modalAppDescription = document.getElementById('modalAppDescription');
-    const modalAppIcon = document.getElementById('modalAppIcon');
-    const modalAppScreenshots = document.getElementById('modalAppScreenshots');
-    const modalDownloadButton = document.getElementById('modalDownloadButton');
-    const settingsMenu = document.getElementById('settingsMenu');
-    const settingsDropdown = document.getElementById('settingsDropdown');
-    const themeSelect = document.getElementById('themeSelect');
-    const adminCheckbox = document.getElementById('adminCheckbox');
-
-    let apps = []; // Array to hold fetched apps data
-
-    // Fetch apps data from the provided JSON URL
+    // Fetch JSON data from the GitHub repository
     fetch('https://raw.githubusercontent.com/DauntingEmperor/winsource/main/source/v2source.json')
         .then(response => response.json())
         .then(data => {
-            apps = data; // Assign fetched data to the apps array
-            displayApps(); // Display apps after fetching data
+            appsData = data;
+            renderApps('All');
         })
-        .catch(error => console.error('Error fetching apps data:', error));
-
-    // Function to display apps
-    function displayApps() {
-        appContainer.innerHTML = '';
-        apps.forEach(app => {
-            const appCard = document.createElement('div');
-            appCard.classList.add('app-card');
-            appCard.innerHTML = `
-                <img src="${app.icon}" alt="${app.name} Icon">
-                <h3>${app.name}</h3>
-                <p>${app.description}</p>
-                <button class="download-button">Download</button>
-            `;
-            appCard.addEventListener('click', () => openModal(app));
-            appContainer.appendChild(appCard);
+        .catch(error => {
+            console.error('Error fetching app data:', error);
         });
-    }
 
-    // Function to open modal with app details
+    // Modal functions
     function openModal(app) {
-        modalAppName.textContent = app.name;
-        modalAppDescription.textContent = app.description;
-        modalAppIcon.src = app.icon;
-        modalAppScreenshots.innerHTML = '';
-        app.screenshots.forEach(src => {
+        const modal = document.getElementById('appModal');
+        document.getElementById('modal-app-name').textContent = app.name;
+        document.getElementById('modal-download-link').href = app.download_link;
+        document.getElementById('modal-app-icon').src = app.app_icon;
+        document.getElementById('modal-app-description').textContent = app.description;
+
+        const screenshotsContainer = document.getElementById('modal-screenshots');
+        screenshotsContainer.innerHTML = '';
+        app.screenshots.forEach(screenshot => {
             const img = document.createElement('img');
-            img.src = src;
-            img.style.maxWidth = '100px';
-            img.style.maxHeight = '100px';
-            modalAppScreenshots.appendChild(img);
+            img.src = screenshot;
+            screenshotsContainer.appendChild(img);
         });
-        modalDownloadButton.onclick = () => {
-            window.open(app.link, '_blank');
-        };
-        appModal.style.display = 'block';
+
+        modal.style.display = 'block';
     }
 
-    // Event listener for close button in modal
-    document.querySelector('.close').addEventListener('click', () => {
-        appModal.style.display = 'none';
-    });
-
-    // Close modal when clicking outside modal content
-    window.onclick = (event) => {
-        if (event.target == appModal) {
-            appModal.style.display = 'none';
+    // Close the modal
+    const modal = document.getElementById('appModal');
+    const span = document.getElementsByClassName('close')[0];
+    span.onclick = function() {
+        modal.style.display = 'none';
+    }
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
         }
-    };
+    }
 
-    // Event listener for search input
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const filteredApps = apps.filter(app => app.name.toLowerCase().includes(searchTerm));
-        displayApps(filteredApps);
+    // Render apps based on category
+    function renderApps(category) {
+        const appContainer = document.getElementById('app-container');
+        appContainer.innerHTML = '';
+        appsData.forEach(app => {
+            if (category === 'All' || app.tabs.includes(category)) {
+                const appCard = document.createElement('div');
+                appCard.className = 'app-card';
+                appCard.innerHTML = `
+                    <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px;">' : ''}</h3>
+                    <img src="${app.app_icon}" alt="${app.name} icon">
+                    <p>${app.description}</p>
+                    <a href="${app.download_link}" class="download-button">Download</a>
+                `;
+                appCard.addEventListener('click', () => {
+                    openModal(app);
+                });
+                appContainer.appendChild(appCard);
+            }
+        });
+    }
+
+    // Search function
+    document.getElementById('search-input').addEventListener('input', (event) => {
+        const query = event.target.value.toLowerCase();
+        const appContainer = document.getElementById('app-container');
+        appContainer.innerHTML = '';
+        appsData.forEach(app => {
+            if (app.name.toLowerCase().includes(query) || app.description.toLowerCase().includes(query)) {
+                const appCard = document.createElement('div');
+                appCard.className = 'app-card';
+                appCard.innerHTML = `
+                    <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px;">' : ''}</h3>
+                    <img src="${app.app_icon}" alt="${app.name} icon">
+                    <p>${app.description}</p>
+                    <a href="${app.download_link}" class="download-button">Download</a>
+                `;
+                appCard.addEventListener('click', () => {
+                    openModal(app);
+                });
+                appContainer.appendChild(appCard);
+            }
+        });
     });
 
-    // Event listener for settings menu
-    settingsMenu.addEventListener('click', () => {
-        settingsDropdown.classList.toggle('show');
+    // Navigation
+    const tabs = ['All', 'Trending', 'Games', 'Utility', 'Other'];
+    const navigation = document.getElementById('navigation');
+    tabs.forEach(tab => {
+        const link = document.createElement('a');
+        link.href = `#${tab}`;
+        link.textContent = tab;
+        link.addEventListener('click', () => {
+            renderApps(tab);
+        });
+        navigation.appendChild(link);
     });
 
-    // Event listener for theme select
-    themeSelect.addEventListener('change', (e) => {
-        document.body.className = e.target.value;
+    // Smooth scrolling for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
     });
 
-    // Event listener for admin checkbox
-    adminCheckbox.addEventListener('change', () => {
-        const showAdminApps = !adminCheckbox.checked;
-        const filteredApps = showAdminApps ? apps.filter(app => !app.admin) : apps;
-        displayApps(filteredApps);
-    });
-</script>
-
+    // Handle initial tab selection based on URL hash
+    const initialTab = window.location.hash ? window.location.hash.substring(1) : 'All';
+    renderApps(initialTab);
 </script>
 
 </body>
