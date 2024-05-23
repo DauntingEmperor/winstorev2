@@ -43,7 +43,6 @@
             flex-wrap: wrap;
             justify-content: center;
             padding: 20px;
-            overflow-y: auto;
         }
         .app-card {
             background-color: white;
@@ -65,8 +64,7 @@
         }
         .app-card img {
             max-width: 100%;
-            border-radius: 15px;
-            object-fit: contain;
+            border-radius: 10px;
         }
         .app-card h3 {
             display: flex;
@@ -117,7 +115,6 @@
             width: 80%;
             border-radius: 15px;
             transition: transform 0.3s;
-            overflow-y: auto;
         }
         .modal-header {
             display: flex;
@@ -126,15 +123,8 @@
         }
         .modal-body img {
             max-width: 100%;
-            border-radius: 15px;
+            border-radius: 10px;
             margin-bottom: 10px;
-            object-fit: contain;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .modal-body img.onerror {
-            src: 'default-image.png';
         }
         .close {
             color: #aaa;
@@ -164,7 +154,7 @@
         }
         @media (max-width: 500px) {
             .app-card {
-                width: calc(100% - 40px);
+                width : calc(100% - 40px);
             }
         }
         .search-bar {
@@ -257,7 +247,7 @@
             border-color: #888;
         }
         .dark-mode .modal-body img {
-            border-radius: 15px;
+            border-radius: 10px;
             border-color: #888;
         }
         .dark-mode .search-bar input {
@@ -272,18 +262,6 @@
         .dark-mode .settings-menu h2 {
             color: white;
         }
-        .settings-menu .close-settings {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-            color: #aaa;
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .settings-menu .close-settings:hover {
-            color: black;
-        }
     </style>
 </head>
 <body>
@@ -293,31 +271,26 @@
 </header>
 
 <nav id="navigation">
-    <a href="#All">All</a>
-    <a href="#Trending">Trending</a>
-    <a href="#Games">Games</a>
-    <a href="#Utility">Utility</a>
-    <a href="#Emulation">Emulation</a>
-    <a href="#Other">Other</a>
+    <!-- Navigation items will be dynamically added here -->
 </nav>
 
-<div class="search-bar">
+<div class="search-bar custom-scrollbar">
     <input type="text" id="search-input" placeholder="Search for apps...">
 </div>
 
-<div class="container custom-scrollbar" id="app-container">
+<div class="container" id="app-container">
     <!-- Your app cards here -->
 </div>
 
 <!-- The Modal -->
 <div id="appModal" class="modal">
-    <div class="modal-content custom-scrollbar">
+    <div class="modal-content">
         <span class="close">&times;</span>
         <div class="modal-header">
             <h3 id="modal-app-name"></h3>
             <a id="modal-download-link" class="download-button">Download</a>
         </div>
-        <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px; border-radius: 15px;">
+        <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px;">
         <p id="modal-app-description"></p>
         <div id="modal-screenshots"></div>
     </div>
@@ -328,7 +301,6 @@
 </div>
 
 <div id="settingsMenu" class="settings-menu custom-scrollbar">
-    <span class="close-settings" onclick="toggleSettings()">&#10006;</span>
     <h2>Settings</h2>
     <label for="theme">Theme:</label>
     <select id="theme" onchange="changeTheme()">
@@ -371,7 +343,6 @@
         app.screenshots.forEach(screenshot => {
             const img = document.createElement('img');
             img.src = screenshot;
-            img.onerror = () => { img.src = 'default-image.png'; }
             screenshotsContainer.appendChild(img);
         });
 
@@ -400,7 +371,7 @@
                     const appCard = document.createElement('div');
                     appCard.className = 'app-card';
                     appCard.innerHTML = `
-                        <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px; border-radius: 15px;">' : ''}</h3>
+                        <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px;">' : ''}</h3>
                         <img src="${app.app_icon}" alt="${app.name} icon">
                         <p>${app.description}</p>
                         <a href="${app.download_link}" class="download-button">Download</a>
@@ -425,7 +396,7 @@
                     const appCard = document.createElement('div');
                     appCard.className = 'app-card';
                     appCard.innerHTML = `
-                        <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px; border-radius: 15px;">' : ''}</h3>
+                        <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px;">' : ''}</h3>
                         <img src="${app.app_icon}" alt="${app.name} icon">
                         <p>${app.description}</p>
                         <a href="${app.download_link}" class="download-button">Download</a>
