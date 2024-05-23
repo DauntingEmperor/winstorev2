@@ -11,6 +11,7 @@
             padding: 0;
             background-color: #f5f5f5;
             color: #333;
+            overflow-x: hidden; /* Disable horizontal scrolling */
         }
         header {
             background: linear-gradient(135deg, #0078D7, #005A9E);
@@ -212,6 +213,7 @@
 </header>
 
 <nav id="navigation">
+    <!-- Navigation items will be dynamically added
     <!-- Navigation items will be dynamically added here -->
 </nav>
 
@@ -231,9 +233,17 @@
             <h3 id="modal-app-name"></h3>
             <a id="modal-download-link" class="download-button">Download</a>
         </div>
-        <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px; border-radius: 10px; max-width: 150px;">
+        <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px;">
         <p id="modal-app-description"></p>
         <div id="modal-screenshots"></div>
+    </div>
+</div>
+
+<!-- Analytics section -->
+<div class="container" id="analytics-container" style="display: none;">
+    <h2>Top 10</h2>
+    <div id="top-10" class="container">
+        <!-- Top 10 apps will be dynamically added here -->
     </div>
 </div>
 
@@ -250,7 +260,6 @@
         .then(data => {
             appsData = data;
             renderApps('All');
-            setupNavigation();
         })
         .catch(error => {
             console.error('Error fetching app data:', error);
@@ -269,87 +278,97 @@
         app.screenshots.forEach(screenshot => {
             const img = document.createElement('img');
             img.src = screenshot;
-            img.style.borderRadius = '10px';
-            img.addEventListener('click', () => {
+            img.onclick = function() {
                 img.classList.toggle('expanded');
-            });
+            };
             screenshotsContainer.appendChild(img);
         });
 
-        modal.classList.add('show');
+        modal.style.display = 'block';
     }
 
-    function closeModal() {
-        document.getElementById('appModal').classList.remove('show');
+    // Close the modal
+    const modal = document.getElementById('appModal');
+    const span = document.getElementsByClassName('close')[0];
+    span.onclick = function() {
+        modal.style.display = 'none';
+    }
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
     }
 
-    document.querySelector('.close').addEventListener('click', closeModal);
-
-    // Render apps
+    // Render apps based on category
     function renderApps(category) {
         const appContainer = document.getElementById('app-container');
         appContainer.innerHTML = '';
         appsData.forEach(app => {
-            if (category === 'All' || app.category === category) {
+            if (category === 'All' || app.tabs.includes(category)) {
                 const appCard = document.createElement('div');
                 appCard.className = 'app-card';
                 appCard.innerHTML = `
-                    <img src="${app.app_icon}" alt="${app.name}">
-                    <h3>${app.name} <span>${app.downloads} Downloads</span></h3>
+                    <h3>${app.name}</h3>
+                    <img src="${app.app_icon}" alt="${app.name} icon">
                     <p>${app.description}</p>
-                    <button class="download-button">Download</button>
+                    <a href="${app.download_link}" class="download-button">Download</a>
                 `;
-                appCard.addEventListener('click', () => openModal(app));
+                appCard.addEventListener('click', () => {
+                    openModal(app);
+                });
                 appContainer.appendChild(appCard);
             }
         });
     }
 
-    // Handle navigation
-    const navLinks = [
-        { name: 'All' },
-        { name: 'Trending' },
-        { name: 'Games' },
-        { name: 'Productivity' },
-    ];
-
-    function setupNavigation() {
-        const nav = document.getElementById('navigation');
-        nav.innerHTML = '';
-        navLinks.forEach(link => {
-            const a = document.createElement('a');
-            a.href = '#';
-            a.textContent = link.name;
-            a.addEventListener('click', (event) => {
-                event.preventDefault();
-                if (link.name === 'Trending') {
-                    renderTop10();
-                } else {
-                    renderApps(link.name);
-                }
-            });
-            nav.appendChild(a);
-        });
-    }
-
-    // Render top 10 apps
-    function renderTop10() {
+    // Search function
+    document.getElementById('search-input').addEventListener('input', (event) => {
+        const query = event.target.value.toLowerCase();
         const appContainer = document.getElementById('app-container');
         appContainer.innerHTML = '';
-        const top10 = appsData.sort((a, b) => b.downloads - a.downloads).slice(0, 10);
-        top10.forEach(app => {
-            const appCard = document.createElement('div');
-            appCard.className = 'app-card';
-            appCard.innerHTML = `
-                <img src="${app.app_icon}" alt="${app.name}">
-                <h3>${app.name} <span>${app.downloads} Downloads</span></h3>
-                <p>${app.description}</p>
-                <button class="download-button">Download</button>
-            `;
-            appCard.addEventListener('click', () => openModal(app));
-            appContainer.appendChild(appCard);
+        appsData.forEach(app => {
+            if (app.name.toLowerCase().includes(query) || app.description.toLowerCase().includes(query)) {
+                const appCard = document.createElement('div');
+                appCard.className = 'app-card';
+                appCard.innerHTML = `
+                    <h3>${app.name}</h3>
+                    <img src="${app.app_icon}" alt="${app.name} icon">
+                    <p>${app.description}</p>
+                    <a href="${app.download_link}" class="download-button">Download</a>
+                `;
+                appCard.addEventListener('click', () => {
+                    openModal(app);
+                });
+                appContainer.appendChild(appCard);
+            }
         });
-    }
+    });
+
+    // Navigation
+    const tabs = ['All', 'Trending', 'Games', 'Utility', 'Other'];
+    const navigation = document.getElementById('navigation');
+    tabs.forEach(tab => {
+        const link = document.createElement('a');
+        link.href = '#' + tab.toLowerCase();
+        link.textContent = tab;
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            const tabName = event.target.textContent;
+            renderApps(tabName);
+        });
+        navigation.appendChild(link);
+    });
+
+    // Show analytics section when the tab is 'Trending'
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash.substring(1).toLowerCase();
+        const analyticsContainer = document.getElementById('analytics-container');
+        if (hash === 'trending') {
+            analyticsContainer.style.display = 'block';
+        } else {
+            analyticsContainer.style.display = 'none';
+        }
+    });
 </script>
 
 </body>
