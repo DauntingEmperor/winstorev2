@@ -108,6 +108,9 @@
             background-color: rgba(0, 0, 0, 0.4);
             transition: opacity 0.3s;
         }
+        .modal.show {
+            display: block;
+        }
         .modal-content {
             background-color: #fefefe;
             margin: 5% auto;
@@ -116,7 +119,7 @@
             width: 80%;
             max-width: 800px;
             border-radius: 15px;
-            transition: transform 0.3s;
+            transition: transform 0.3s ease-in-out;
         }
         .modal-header {
             display: flex;
@@ -130,7 +133,7 @@
             border-radius: 10px;
             margin-bottom: 10px;
             cursor: pointer;
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.3s ease-in-out, border-radius 0.3s ease-in-out;
         }
         .modal-body img.expanded {
             transform: scale(1.5);
@@ -141,6 +144,7 @@
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
+            transition: color 0.3s ease-in-out;
         }
         .close:hover,
         .close:focus {
@@ -183,6 +187,22 @@
             box-shadow: 0 0 10px rgba(0, 120, 215, 0.5);
             outline: none;
         }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 </head>
 <body>
@@ -211,7 +231,7 @@
             <h3 id="modal-app-name"></h3>
             <a id="modal-download-link" class="download-button">Download</a>
         </div>
-        <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px; border-radius: 10px;">
+        <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px; border-radius: 10px; max-width: 150px;">
         <p id="modal-app-description"></p>
         <div id="modal-screenshots"></div>
     </div>
@@ -256,22 +276,16 @@
             screenshotsContainer.appendChild(img);
         });
 
-        modal.style.display = 'block';
+        modal.classList.add('show');
     }
 
-    // Close the modal
-    const modal = document.getElementById('appModal');
-    const span = document.getElementsByClassName('close')[0];
-    span.onclick = function() {
-        modal.style.display = 'none';
-    }
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
+    function closeModal() {
+        document.getElementById('appModal').classList.remove('show');
     }
 
-    // Render apps based on category
+    document.querySelector('.close').addEventListener('click', closeModal);
+
+    // Render apps
     function renderApps(category) {
         const appContainer = document.getElementById('app-container');
         appContainer.innerHTML = '';
@@ -293,10 +307,10 @@
 
     // Handle navigation
     const navLinks = [
-        { name: 'All', path: 'all' },
-        { name: 'Trending', path: 'trending' },
-        { name: 'Games', path: 'games' },
-        { name: 'Productivity', path: 'productivity' },
+        { name: 'All' },
+        { name: 'Trending' },
+        { name: 'Games' },
+        { name: 'Productivity' },
     ];
 
     function setupNavigation() {
