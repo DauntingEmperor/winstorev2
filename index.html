@@ -114,12 +114,13 @@
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: 5% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
             border-radius: 15px;
-            transition: transform 0.3s;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .modal-header {
             display: flex;
@@ -128,10 +129,9 @@
         }
         .modal-body img {
             max-width: 100%;
-            max-height: 80%;
+            max-height: 300px;
             border-radius: 10px;
             margin-bottom: 10px;
-       
         }
         .close {
             color: #aaa;
@@ -209,10 +209,10 @@
             position: fixed;
             bottom: 80px;
             left: 20px;
-            width: 180px;
+            width: 200px;
             background-color: white;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0.1);
             display: none;
             padding: 10px;
             z-index: 998;
@@ -236,6 +236,79 @@
         .settings-dropdown select:focus {
             box-shadow: 0 0 5px rgba(0, 120, 215, 0.5);
         }
+        .settings-dropdown input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        /* Dark Mode */
+        body.dark {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark header {
+            background: linear-gradient(135deg, #333, #222);
+        }
+        body.dark nav {
+            background-color: #222;
+        }
+        body.dark nav a {
+            color: #e0e0e0;
+        }
+        body.dark nav a:hover {
+            background-color: #333;
+        }
+        body.dark .app-card {
+            background-color: #333;
+            color: #e0e0e0;
+        }
+        body.dark .app-card:hover {
+            background-color: #444;
+        }
+        body.dark .modal-content {
+            background-color: #333;
+            color: #e0e0e0;
+        }
+        body.dark .download-button {
+            background-color: #555;
+            color: #e0e0e0;
+        }
+        body.dark .download-button:hover {
+            background-color: #666;
+        }
+        /* Blood Mode */
+        body.blood {
+            background-color: #330000;
+            color: #ffcccc;
+        }
+        body.blood header {
+            background: linear-gradient(135deg, #660000, #550000);
+        }
+        body.blood nav {
+            background-color: #550000;
+        }
+        body.blood nav a {
+            color: #ffcccc;
+        }
+        body.blood nav a:hover {
+            background-color: #660000;
+        }
+        body.blood .app-card {
+            background-color: #660000;
+            color: #ffcccc;
+        }
+        body.blood .app-card:hover {
+            background-color: #770000;
+        }
+        body.blood .modal-content {
+            background-color: #660000;
+            color: #ffcccc;
+        }
+        body.blood .download-button {
+            background-color: #880000;
+            color: #ffcccc;
+        }
+        body.blood .download-button:hover {
+            background-color: #990000;
+        }
     </style>
 </head>
 <body>
@@ -244,194 +317,180 @@
     <h1>Windows App Store</h1>
 </header>
 
-<nav id="navigation">
-    <!-- Navigation items will be dynamically added here -->
+<nav>
+    <a href="#">Home</a>
+    <a href="#">Apps</a>
+    <a href="#">Games</a>
+    <a href="#">Web</a>
 </nav>
 
 <div class="search-bar">
-    <input type="text" id="search-input" placeholder="Search for apps...">
+    <input type="text" id="searchInput" placeholder="Search apps...">
 </div>
 
 <div class="container" id="app-container">
-    <!-- Your app cards here -->
+    <!-- App cards will be dynamically added here -->
 </div>
 
-<!-- The Modal -->
+<!-- Modal -->
 <div id="appModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <div class="modal-header">
-            <h3 id="modal-app-name"></h3>
-            <a id="modal-download-link" class="download-button">Download</a>
+            <h2 id="modalAppName">App Name</h2>
+            <button id="modalDownloadButton" class="download-button">Download</button>
         </div>
-        <img id="modal-app-icon" src="" alt="App Icon">
-        <p id="modal-app-description"></p>
-        <div id="modal-screenshots"></div>
+        <div class="modal-body">
+            <img id="modalAppIcon" src="" alt="App Icon" style="max-width: 100px; max-height: 100px;">
+            <p id="modalAppDescription">App Description</p>
+            <div id="modalAppScreenshots"></div>
+        </div>
     </div>
 </div>
 
 <!-- Settings Menu -->
 <div class="settings-menu" id="settingsMenu">
     <svg class="settings-icon" viewBox="0 0 24 24">
-        <path fill="#ffffff" d="M12,14.5c1.93,0,3.5-1.57,3.5-3.5S13.93,7.5,12,7.5s-3.5,1.57-3.5,3.5S10.07,14.5,12,14.5z M12,10.5c0.83,0,1.5,0.67,1.5,1.5S12.83,13.5,12,13.5s-1.5-0.67-1.5-1.5S11.17,10.5,12,10.5z M12,4.5c3.31,0,6,2.69,6,6s-2.69,6-6,6s-6-2.69-6-6S8.69,4.5,12,4.5z M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.42,0-8-3.58-8-8s3.58-8,8-8s8,3.58,8,8S16.42,20,12,20z"></path>
+        <path fill="currentColor" d="M12,8A4,4 0 1,0 16,12A4,4 0 0,0 12,8M3.05,13H6.19A6.72,6.72 0 0,0 6.7,15.24L4.88,17.12L6.34,18.56L8.22,16.74A6.72,6.72 0 0,0 10.24,17.19V20.95H13.76V17.19A6.72,6.72 0 0,0 15.78,16.74L17.66,18.56L19.12,17.12L17.3,15.24A6.72,6.72 0 0,0 17.81,13H20.95V10.59H17.81A6.72,6.72 0 0,0 17.3,8.76L19.12,6.88L17.66,5.44L15.78,7.26A6.72,6.72 0 0,0 13.76,6.81V3.05H10.24V6.81A6.72,6.72 0 0,0 8.22,7.26L6.34,5.44L4.88,6.88L6.7,8.76A6.72,6.72 0 0,0 6.19,10.59H3.05V13Z" />
     </svg>
 </div>
 
-<!-- Settings Dropdown Menu -->
+<!-- Settings Dropdown -->
 <div class="settings-dropdown" id="settingsDropdown">
-    <label for="theme">Theme:</label>
-    <select id="theme">
-        <option value="light">Light Mode</option>
-        <option value="dark">Dark Mode</option>
-        <option value="blood">Blood Mode</option>
+    <label for="themeSelect">Theme:</label>
+    <select id="themeSelect">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+        <option value="blood">Bloodmoon</option>
     </select>
-    <br>
-    <input type="checkbox" id="hideAdminApps">
-    <label for="hideAdminApps">Hide Admin Apps</label>
 </div>
 
+<footer>
+    <p>&copy; 2024 Windows App Store</p>
+</footer>
+
 <script>
-    let appsData = [];
-let currentTab = 'All';
-
-// Fetch JSON data from the GitHub repository
-fetch('https://raw.githubusercontent.com/DauntingEmperor/winsource/main/source/v2source.json')
-    .then(response => response.json())
-    .then(data => {
-        appsData = data;
-        renderApps(currentTab);
-    })
-    .catch(error => {
-        console.error('Error fetching app data:', error);
-    });
-
-// Modal functions
-function openModal(app) {
-    const modal = document.getElementById('appModal');
-    document.getElementById('modal-app-name').textContent = app.name;
-    document.getElementById('modal-download-link').href = app.download_link;
-    document.getElementById('modal-app-icon').src = app.app_icon;
-    document.getElementById('modal-app-description').textContent = app.description;
-
-    const screenshotsContainer = document.getElementById('modal-screenshots');
-    screenshotsContainer.innerHTML = '';
-    app.screenshots.forEach(screenshot => {
-        const img = document.createElement('img');
-        img.src = screenshot;
-        img.onclick = function() {
-            openScreenshotModal(screenshot);
-        };
-        screenshotsContainer.appendChild(img);
-    });
-
-    modal.style.display = 'block';
-}
-
-function openScreenshotModal(screenshot) {
-    const modal = document.getElementById('screenshotModal');
-    const img = document.getElementById('screenshot-img');
-    img.src = screenshot;
-    modal.style.display = 'block';
-}
-
-// Close the modal
-const modals = document.getElementsByClassName('modal');
-for (let i = 0; i < modals.length; i++) {
-    const span = modals[i].getElementsByClassName('close')[0];
-    span.onclick = function() {
-        modals[i].style.display = 'none';
-    };
-    window.onclick = function(event) {
-        if (event.target == modals[i]) {
-            modals[i].style.display = 'none';
+    // Sample JSON data
+    const appsData = [
+        {
+            "name": "App 1",
+            "description": "Description for App 1",
+            "icon": "https://via.placeholder.com/100",
+            "screenshots": [
+                "https://via.placeholder.com/400",
+                "https://via.placeholder.com/400",
+                "https://via.placeholder.com/400"
+            ],
+            "downloadLink": "#"
+        },
+        {
+            "name": "App 2",
+            "description": "Description for App 2",
+            "icon": "https://via.placeholder.com/100",
+            "screenshots": [
+                "https://via.placeholder.com/400",
+                "https://via.placeholder.com/400",
+                "https://via.placeholder.com/400"
+            ],
+            "downloadLink": "#"
+        },
+        {
+            "name": "App 3",
+            "description": "Description for App 3",
+            "icon": "https://via.placeholder.com/100",
+            "screenshots": [
+                "https://via.placeholder.com/400",
+                "https://via.placeholder.com/400",
+                "https://via.placeholder.com/400"
+            ],
+            "downloadLink": "#"
         }
-    };
-}
+    ];
 
-// Render apps based on category
-function renderApps(category) {
     const appContainer = document.getElementById('app-container');
-    appContainer.innerHTML = '';
-    appsData.forEach(app => {
-        if (category === 'All' || app.tabs.includes(category)) {
-            const appCard = document.createElement('div');
-            appCard.className = 'app-card';
-            const adminBadge = app.admin ? '<img src="https://png.pngtree.com/png-vector/20190116/ourmid/pngtree-vector-shield-icon-png-image_322145.jpg" style="width: 20px; margin-left: 10px;">' : '';
-            appCard.innerHTML = `
-                <h3>${app.name}${adminBadge}</h3>
-                <img src="${app.app_icon}" alt="${app.name} icon" class="app-icon">
-                <p>${app.description}</p>
-                <a href="${app.download_link}" class="download-button">Download</a>
-            `;
-            appCard.addEventListener('click', () => {
-                openModal(app);
-            });
-            appContainer.appendChild(appCard);
-        }
-    });
-}
 
-// Search function
-document.getElementById('search-input').addEventListener('input', (event) => {
-    const query = event.target.value.toLowerCase();
-    renderApps(currentTab);
-    const appCards = document.querySelectorAll('.app-card');
-    appCards.forEach(card => {
-        const appName = card.querySelector('h3').textContent.toLowerCase();
-        const appDescription = card.querySelector('p').textContent.toLowerCase();
-        if (!appName.includes(query) && !appDescription.includes(query)) {
-            card.style.display = 'none';
-        } else {
-            card.style.display = 'block';
-        }
-    });
-});
-
-// Navigation
-const tabs = ['All', 'Trending', 'Games', 'Utility', 'Other'];
-const navigation = document.getElementById('navigation');
-tabs.forEach(tab => {
-    const link = document.createElement('a');
-    link.href = '#';
-    link.textContent = tab;
-    link.addEventListener('click', () => {
-        currentTab = tab;
-        renderApps(tab);
-    });
-    navigation.appendChild(link);
-});
-
-// Settings modal functions
-function toggleSettings() {
-    const settingsModal = document.getElementById('settingsModal');
-    if (settingsModal.classList.contains('open')) {
-        settingsModal.classList.remove('open');
-    } else {
-        settingsModal.classList.add('open');
+    // Function to create app cards
+    function createAppCard(app) {
+        const appCard = document.createElement('div');
+        appCard.className = 'app-card';
+        appCard.innerHTML = `
+            <img src="${app.icon}" alt="${app.name}">
+            <h3>${app.name}<button class="download-button" onclick="event.stopPropagation(); window.open('${app.downloadLink}', '_blank');">Download</button></h3>
+            <p>${app.description}</p>
+        `;
+        appCard.addEventListener('click', () => {
+            openAppModal(app);
+        });
+        return appCard;
     }
-}
 
-// Apply theme based on user selection
-document.getElementById('theme-select').addEventListener('change', (event) => {
-    const selectedTheme = event.target.value;
-    document.body.className = selectedTheme;
-});
+    // Function to open app modal
+    function openAppModal(app) {
+        const modal = document.getElementById('appModal');
+        const modalAppName = document.getElementById('modalAppName');
+        const modalAppIcon = document.getElementById('modalAppIcon');
+        const modalAppDescription = document.getElementById('modalAppDescription');
+        const modalAppScreenshots = document.getElementById('modalAppScreenshots');
+        const modalDownloadButton = document.getElementById('modalDownloadButton');
 
-// Hide admin apps based on user selection
-document.getElementById('hide-admin').addEventListener('change', (event) => {
-    const hideAdmin = event.target.checked;
-    const appCards = document.querySelectorAll('.app-card');
-    appCards.forEach(card => {
-        const adminBadge = card.querySelector('h3 img');
-        if (adminBadge) {
-            if (hideAdmin) {
-                card.style.display = 'none';
-            } else {
-                card.style.display = 'block';
-            }
+        modalAppName.textContent = app.name;
+        modalAppIcon.src = app.icon;
+        modalAppDescription.textContent = app.description;
+        modalDownloadButton.onclick = () => window.open(app.downloadLink, '_blank');
+
+        modalAppScreenshots.innerHTML = '';
+        app.screenshots.forEach(screenshot => {
+            const img = document.createElement('img');
+            img.src = screenshot;
+            img.alt = app.name;
+            img.style.maxWidth = '200px';
+            img.style.maxHeight = '200px';
+            modalAppScreenshots.appendChild(img);
+        });
+
+        modal.style.display = 'block';
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        const modal = document.getElementById('appModal');
+        modal.style.display = 'none';
+    }
+
+    // Render apps on page load
+    function renderApps() {
+        appsData.forEach(app => {
+            const appCard = createAppCard(app);
+            appContainer.appendChild(appCard);
+        });
+    }
+
+    // Event listener for close button in modal
+    document.querySelector('.close').addEventListener('click', closeModal);
+
+    // Event listener for closing modal when clicking outside of it
+    window.onclick = function(event) {
+        const modal = document.getElementById('appModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
         }
+    }
+
+    // Toggle settings menu
+    const settingsMenu = document.getElementById('settingsMenu');
+    const settingsDropdown = document.getElementById('settingsDropdown');
+    settingsMenu.addEventListener('click', () => {
+        settingsDropdown.classList.toggle('show');
     });
-});
+
+    // Change theme
+    const themeSelect = document.getElementById('themeSelect');
+    themeSelect.addEventListener('change', (event) => {
+        document.body.className = event.target.value;
+    });
+
+    // Render apps on page load
+    renderApps();
 
 </script>
 
