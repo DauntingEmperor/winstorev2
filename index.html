@@ -11,7 +11,11 @@
             padding: 0;
             background-color: #f5f5f5;
             color: #333;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        body.dark-mode {
+            background-color: #333;
+            color: #fff;
         }
         header {
             background: linear-gradient(135deg, #0078D7, #005A9E);
@@ -71,7 +75,6 @@
             align-items: center;
             justify-content: space-between;
             margin: 10px 0;
-            color: inherit;
         }
         .app-card p {
             color: #555;
@@ -174,26 +177,78 @@
             box-shadow: 0 0 10px rgba(0, 120, 215, 0.5);
             outline: none;
         }
-        .settings-icon {
+        /* Settings Menu */
+        .settings-menu {
             position: fixed;
             bottom: 20px;
             left: 20px;
-            cursor: pointer;
-            z-index: 100;
-        }
-        .theme-dropdown {
-            position: fixed;
-            bottom: 60px;
-            left: 20px;
             background-color: white;
-            border: 1px solid #ccc;
-            padding: 5px 10px;
-            border-radius: 5px;
-            display: none;
-            z-index: 100;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 99;
         }
-        .theme-dropdown.active {
+        .settings-menu-button {
+            cursor: pointer;
+        }
+        .settings-menu-dropdown {
+            display: none;
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .settings-menu-dropdown.show {
             display: block;
+        }
+        .settings-menu-dropdown-content {
+            padding: 10px;
+        }
+        .settings-menu-dropdown-content select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        .settings-menu-dropdown-content select:focus {
+            outline: none;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+        /* Dark Mode for App Cards */
+        body.dark-mode .app-card {
+            background-color: #444;
+            color: #fff;
+            box-shadow: 0 6px 12px rgba(255, 255, 255, 0.1);
+        }
+        /* Dark Mode for Settings Menu */
+        body.dark-mode .settings-menu,
+        body.dark-mode .settings-menu-dropdown {
+            background-color: #444;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+        }
+        /* Dark Mode for Settings Menu Button */
+        body.dark-mode .settings-menu-button {
+            filter: invert(1);
         }
     </style>
 </head>
@@ -233,19 +288,56 @@
     <p>&copy; 2024 Windows App Store. All rights reserved.</p>
 </footer>
 
-<div class="settings-icon" onclick="toggleThemesDropdown()">
-    <img src="settings-icon.png" alt="Settings">
-</div>
-
-<div class="theme-dropdown" id="themeDropdown">
-    <select id="themeSelect" onchange="changeTheme()">
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-    </select>
+<!-- Settings Menu -->
+<div class="settings-menu">
+    <img src="settings-icon.png" alt="Settings" class="settings-menu-button" onclick="toggleSettingsDropdown()">
+    <div class="settings-menu-dropdown" id="settingsDropdown">
+        <div class="settings-menu-dropdown-content">
+            <h3>Settings</h3>
+            <select id="themeSelect" onchange="toggleDarkMode()">
+                <option value="light">Light Mode</option>
+                <option value="dark">Dark Mode</option>
+            </select>
+        </div>
+    </div>
 </div>
 
 <script>
     let appsData = [];
+    let darkMode = localStorage.getItem('darkMode');
+
+    // Toggle dark mode
+    function toggleDarkMode() {
+        const body = document.body;
+        const appCards = document.querySelectorAll('.app-card');
+        const settingsMenu = document.querySelector('.settings-menu');
+        const settingsDropdown = document.querySelector('.settings-menu-dropdown');
+        
+        if (darkMode === 'true') {
+            body.classList.remove('dark-mode');
+            appCards.forEach(card => {
+                card.classList.remove('dark-mode');
+            });
+            settingsMenu.classList.remove('dark-mode');
+            settingsDropdown.classList.remove('dark-mode');
+            darkMode = 'false';
+        } else {
+            body.classList.add('dark-mode');
+            appCards.forEach(card => {
+                card.classList.add('dark-mode');
+            });
+            settingsMenu.classList.add('dark-mode');
+            settingsDropdown.classList.add('dark-mode');
+            darkMode = 'true';
+        }
+        localStorage.setItem('darkMode', darkMode);
+    }
+
+    // Toggle settings dropdown
+    function toggleSettingsDropdown() {
+        const dropdown = document.getElementById('settingsDropdown');
+        dropdown.classList.toggle('show');
+    }
 
     // Fetch JSON data from the GitHub repository
     fetch('https://raw.githubusercontent.com/DauntingEmperor/winsource/main/source/v2source.json')
@@ -362,22 +454,11 @@
     const initialTab = window.location.hash ? window.location.hash.substring(1) : 'All';
     renderApps(initialTab);
 
-    // Settings dropdown functions
-    function toggleThemesDropdown() {
-        const dropdown = document.getElementById('themeDropdown');
-        dropdown.classList.toggle('active');
-    }
-
-    function changeTheme() {
-        const theme = document.getElementById('themeSelect').value;
-        if (theme === 'dark') {
-            document.body.classList.add('dark-mode');
-        } else {
-            document.body.classList.remove('dark-mode');
-        }
+    // Check if dark mode is enabled
+    if (darkMode === 'true') {
+        toggleDarkMode();
     }
 </script>
-
 
 </body>
 </html>
