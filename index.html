@@ -236,6 +236,146 @@
         body.blood .download-button:hover {
             background-color: #990000;
         }
+        /* Haze theme */
+        body.haze {
+            background-color: #330033;
+            color: #ffccff;
+        }
+        body.haze header {
+            background: linear-gradient(135deg, #550055, #660066);
+        }
+        body.haze nav {
+            background-color: #550055;
+        }
+        body.haze nav a {
+            color: #ffccff;
+        }
+        body.haze nav a:hover {
+            background-color: #660066;
+        }
+        body.haze .app-card {
+            background-color: #660066;
+            color: #ffccff;
+        }
+        body.haze .app-card:hover {
+            background-color: #770077;
+        }
+        body.haze .modal-content {
+            background-color: #660066;
+            color: #ffccff;
+        }
+        body.haze .download-button {
+            background-color: #880088;
+            color: #ffccff;
+        }
+        body.haze .download-button:hover {
+            background-color: #990099;
+        }
+        /* Sky theme */
+        body.sky {
+            background-color: #003366;
+            color: #cceeff;
+        }
+        body.sky header {
+            background: linear-gradient(135deg, #0055aa, #0066cc);
+        }
+        body.sky nav {
+            background-color: #0055aa;
+        }
+        body.sky nav a {
+            color: #cceeff;
+        }
+        body.sky nav a:hover {
+            background-color: #0066cc;
+        }
+        body.sky .app-card {
+            background-color: #0066cc;
+            color: #cceeff;
+        }
+        body.sky .app-card:hover {
+            background-color: #0077dd;
+        }
+        body.sky .modal-content {
+            background-color: #0066cc;
+            color: #cceeff;
+        }
+        body.sky .download-button {
+            background-color: #0088ee;
+            color: #cceeff;
+        }
+        body.sky .download-button:hover {
+            background-color: #0099ff;
+        }
+        /* Dirt theme */
+        body.dirt {
+            background-color: #3b2f2f;
+            color: #f4e3c2;
+        }
+        body.dirt header {
+            background: linear-gradient(135deg, #4e3d3d, #6a5252);
+        }
+        body.dirt nav {
+            background-color: #4e3d3d;
+        }
+        body.dirt nav a {
+            color: #f4e3c2;
+        }
+        body.dirt nav a:hover {
+            background-color: #6a5252;
+        }
+        body.dirt .app-card {
+            background-color: #6a5252;
+            color: #f4e3c2;
+        }
+        body.dirt .app-card:hover {
+            background-color: #7d6565;
+        }
+        body.dirt .modal-content {
+            background-color: #6a5252;
+            color: #f4e3c2;
+        }
+        body.dirt .download-button {
+            background-color: #8b7373;
+            color: #f4e3c2;
+        }
+        body.dirt .download-button:hover {
+            background-color: #9e8686;
+        }
+        /* Lime theme */
+        body.lime {
+            background-color: #004d00;
+            color: #ccffcc;
+        }
+        body.lime header {
+            background: linear-gradient(135deg, #007a00, #009900);
+        }
+        body.lime nav {
+            background-color: #007a00;
+        }
+        body.lime nav a {
+            color: #ccffcc;
+        }
+        body.lime nav a:hover {
+            background-color: #009900;
+        }
+        body.lime .app-card {
+            background-color: #009900;
+            color: #ccffcc;
+        }
+        body.lime .app-card:hover {
+            background-color: #00b300;
+        }
+        body.lime .modal-content {
+            background-color: #009900;
+            color: #ccffcc;
+        }
+        body.lime .download-button {
+            background-color: #00cc00;
+            color: #ccffcc;
+        }
+        body.lime .download-button:hover {
+            background-color: #00e600;
+        }
     </style>
 </head>
 <body>
@@ -246,39 +386,37 @@
 
 <nav>
     <a href="#">Home</a>
-    <a href="#">Apps</a>
-    <a href="#">Games</a>
     <a href="#">Web</a>
+    <a href="#">Categories</a>
 </nav>
 
 <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Search apps...">
+    <input type="text" id="searchInput" placeholder="Search for apps...">
 </div>
 
 <div class="container" id="app-container">
-    <!-- App cards will be dynamically added here -->
+    <!-- App cards will be appended here -->
 </div>
 
-<!-- Modal -->
+<!-- The Modal -->
 <div id="appModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <div class="modal-header">
-            <h2 id="modalAppName">App Name</h2>
-            <button id="modalDownloadButton" class="download-button">Download</button>
+            <h2 id="modalAppName"></h2>
         </div>
         <div class="modal-body">
-            <img id="modalAppIcon" src="" alt="App Icon" style="max-width: 100px; max-height: 100px;">
-            <p id="modalAppDescription">App Description</p>
+            <img id="modalAppIcon" src="" alt="App Icon">
+            <p id="modalAppDescription"></p>
             <div id="modalAppScreenshots"></div>
+            <button id="modalDownloadButton" class="download-button">Download</button>
         </div>
     </div>
 </div>
 
-<!-- Settings Menu -->
 <div class="settings-menu" id="settingsMenu">
-    <svg class="settings-icon" viewBox="0 0 24 24">
-        <path fill="currentColor" d="M12,8A4,4 0 1,0 16,12A4,4 0 0,0 12,8M3.05,13H6.19A6.72,6.72 0 0,0 6.7,15.24L4.88,17.12L6.34,18.56L8.22,16.74A6.72,6.72 0 0,0 10.24,17.19V20.95H13.76V17.19A6.72,6.72 0 0,0 15.78,16.74L17.66,18.56L19.12,17.12L17.3,15.24A6.72,6.72 0 0,0 17.81,13H20.95V10.59H17.81A6.72,6.72 0 0,0 17.3,8.76L19.12,6.88L17.66,5.44L15.78,7.26A6.72,6.72 0 0,0 13.76,6.81V3.05H10.24V6.81A6.72,6.72 0 0,0 8.22,7.26L6.34,5.44L4.88,6.88L6.7,8.76A6.72,6.72 0 0,0 6.19,10.59H3.05V13Z" />
+    <svg viewBox="0 0 24 24">
+        <path d="M12,8A4,4 0 1,0 16,12A4,4 0 0,0 12,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M4.93,13H3.05V11H4.93C5.19,10.11 5.57,9.28 6.05,8.55L4.22,6.73L5.64,5.3L7.46,7.12C8.19,6.64 9.03,6.26 9.91,6L10.81,3.05H13.19L14.09,6C14.97,6.26 15.81,6.64 16.54,7.12L18.36,5.3L19.78,6.73L17.95,8.55C18.43,9.28 18.81,10.11 19.07,11H20.95V13H19.07C18.81,13.89 18.43,14.72 17.95,15.45L19.78,17.27L18.36,18.7L16.54,16.88C15.81,17.36 14.97,17.74 14.09,18L13.19,20.95H10.81L9.91,18C9.03,17.74 8.19,17.36 7.46,16.88L5.64,18.7L4.22,17.27L6.05,15.45C5.57,14.72 5.19,13.89 4.93,13Z" />
     </svg>
 </div>
 
@@ -288,6 +426,10 @@
         <option value="default">Default</option>
         <option value="dark">Dark</option>
         <option value="blood">Bloodmoon</option>
+        <option value="haze">Haze</option>
+        <option value="sky">Sky</option>
+        <option value="dirt">Dirt</option>
+        <option value="lime">Lime</option>
     </select>
     <label>
         <input type="checkbox" id="adminCheckbox"> Hide admin apps
@@ -324,6 +466,7 @@
         }
     ];
 
+<script>
     const appContainer = document.getElementById('app-container');
     const searchInput = document.getElementById('searchInput');
     const appModal = document.getElementById('appModal');
@@ -337,11 +480,21 @@
     const themeSelect = document.getElementById('themeSelect');
     const adminCheckbox = document.getElementById('adminCheckbox');
 
-    let filteredApps = apps;
+    let apps = []; // Array to hold fetched apps data
 
+    // Fetch apps data from the provided JSON URL
+    fetch('https://raw.githubusercontent.com/DauntingEmperor/winsource/main/source/v2source.json')
+        .then(response => response.json())
+        .then(data => {
+            apps = data; // Assign fetched data to the apps array
+            displayApps(); // Display apps after fetching data
+        })
+        .catch(error => console.error('Error fetching apps data:', error));
+
+    // Function to display apps
     function displayApps() {
         appContainer.innerHTML = '';
-        filteredApps.forEach(app => {
+        apps.forEach(app => {
             const appCard = document.createElement('div');
             appCard.classList.add('app-card');
             appCard.innerHTML = `
@@ -355,6 +508,7 @@
         });
     }
 
+    // Function to open modal with app details
     function openModal(app) {
         modalAppName.textContent = app.name;
         modalAppDescription.textContent = app.description;
@@ -373,41 +527,43 @@
         appModal.style.display = 'block';
     }
 
+    // Event listener for close button in modal
     document.querySelector('.close').addEventListener('click', () => {
         appModal.style.display = 'none';
     });
 
+    // Close modal when clicking outside modal content
     window.onclick = (event) => {
         if (event.target == appModal) {
             appModal.style.display = 'none';
         }
     };
 
+    // Event listener for search input
     searchInput.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
-        filteredApps = apps.filter(app => app.name.toLowerCase().includes(searchTerm));
-        displayApps();
+        const filteredApps = apps.filter(app => app.name.toLowerCase().includes(searchTerm));
+        displayApps(filteredApps);
     });
 
+    // Event listener for settings menu
     settingsMenu.addEventListener('click', () => {
         settingsDropdown.classList.toggle('show');
     });
 
+    // Event listener for theme select
     themeSelect.addEventListener('change', (e) => {
         document.body.className = e.target.value;
     });
 
-    adminCheckbox.addEventListener('change', (e) => {
-        if (e.target.checked) {
-            filteredApps = apps.filter(app => !app.admin);
-        } else {
-            filteredApps = apps;
-        }
-        displayApps();
+    // Event listener for admin checkbox
+    adminCheckbox.addEventListener('change', () => {
+        const showAdminApps = !adminCheckbox.checked;
+        const filteredApps = showAdminApps ? apps.filter(app => !app.admin) : apps;
+        displayApps(filteredApps);
     });
+</script>
 
-    // Initial display of apps
-    displayApps();
 </script>
 
 </body>
