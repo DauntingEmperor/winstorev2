@@ -148,10 +148,8 @@
         }
         @media (max-width: 800px) {
             .app-card {
-                width: calc(45
-<!-- Continuation of the previous code -->
-
-% - 40px);
+                width: calc(45% - 40px);
+            }
         }
         @media (max-width: 500px) {
             .app-card {
@@ -166,26 +164,13 @@
             width: 50%;
             padding: 10px;
             font-size: 16px;
-            border-radius: 20px;
+            border-radius: 5px;
             border: 1px solid #ccc;
             transition: box-shadow 0.3s;
         }
         .search-bar input:focus {
             box-shadow: 0 0 10px rgba(0, 120, 215, 0.5);
             outline: none;
-        }
-        ::-webkit-scrollbar {
-            width: 12px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #888; 
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555; 
         }
     </style>
 </head>
@@ -221,26 +206,19 @@
     </div>
 </div>
 
-<!-- Analytics section -->
-<div id="analytics" style="display: none;">
-    <h2>Top 10 Downloads</h2>
-    <ol id="top-10"></ol>
-</div>
-
 <footer>
     <p>&copy; 2024 Windows App Store. All rights reserved.</p>
 </footer>
 
 <script>
     let appsData = [];
-    let currentTab = 'All';
 
     // Fetch JSON data from the GitHub repository
     fetch('https://raw.githubusercontent.com/DauntingEmperor/winsource/main/source/v2source.json')
         .then(response => response.json())
         .then(data => {
             appsData = data;
-            renderApps(currentTab);
+            renderApps('All');
         })
         .catch(error => {
             console.error('Error fetching app data:', error);
@@ -259,7 +237,6 @@
         app.screenshots.forEach(screenshot => {
             const img = document.createElement('img');
             img.src = screenshot;
-            img.className = 'modal-screenshot';
             screenshotsContainer.appendChild(img);
         });
 
@@ -287,10 +264,10 @@
                 const appCard = document.createElement('div');
                 appCard.className = 'app-card';
                 appCard.innerHTML = `
-                    <h3>${app.name} ${app.admin ? '<img src="shield.png" alt="Admin" style="height: 20px; width: 20px;">' : ''}</h3>
+                    <h3>${app.name}${app.admin ? '<img src="https://png.pngtree.com/png-vector/20190116/ourmid/pngtree-vector-shield-icon-png-image_322145.jpg" alt="Admin" style="width: 20px; margin-left: 5px;">' : ''}</h3>
                     <img src="${app.app_icon}" alt="${app.name} icon">
                     <p>${app.description}</p>
-                    <a class="download-button" href="${app.download_link}" target="_blank">Download</a>
+                    <a href="${app.download_link}" class="download-button">Download</a>
                 `;
                 appCard.addEventListener('click', () => {
                     openModal(app);
@@ -302,12 +279,7 @@
 
     // Search function
     document.getElementById('search-input').addEventListener('input', (event) => {
-        const query =
-            event.target.value.toLowerCase();
-        renderSearchResults(query);
-    });
-
-    function renderSearchResults(query) {
+        const query = event.target.value.toLowerCase();
         const appContainer = document.getElementById('app-container');
         appContainer.innerHTML = '';
         appsData.forEach(app => {
@@ -315,10 +287,11 @@
                 const appCard = document.createElement('div');
                 appCard.className = 'app-card';
                 appCard.innerHTML = `
-                    <h3>${app.name} ${app.admin ? '<img src="shield.png" alt="Admin" style="height: 20px; width: 20px;">' : ''}</h3>
-                    <img src="${app.app_icon}" alt="${app.name} icon">
+                    <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px;">' : ''}</h3>
+                    <img src="${app.app_icon}" alt="${app.name} icon
+">
                     <p>${app.description}</p>
-                    <a class="download-button" href="${app.download_link}" target="_blank">Download</a>
+                    <a href="${app.download_link}" class="download-button">Download</a>
                 `;
                 appCard.addEventListener('click', () => {
                     openModal(app);
@@ -326,7 +299,7 @@
                 appContainer.appendChild(appCard);
             }
         });
-    }
+    });
 
     // Navigation
     const tabs = ['All', 'Trending', 'Games', 'Utility', 'Other'];
@@ -336,31 +309,12 @@
         link.href = `#${tab}`;
         link.textContent = tab;
         link.addEventListener('click', () => {
-            currentTab = tab;
-            renderApps(currentTab);
-            if (currentTab === 'Trending') {
-                document.getElementById('analytics').style.display = 'block';
-                renderTopDownloads();
-            } else {
-                document.getElementById('analytics').style.display = 'none';
-            }
+            renderApps(tab);
         });
         navigation.appendChild(link);
     });
 
-    // Analytics
-    function renderTopDownloads() {
-        const top10 = document.getElementById('top-10');
-        top10.innerHTML = '';
-        const sortedApps = appsData.sort((a, b) => (a.downloads < b.downloads) ? 1 : -1).slice(0, 10);
-        sortedApps.forEach(app => {
-            const li = document.createElement('li');
-            li.textContent = `${app.name} - ${app.downloads} downloads`;
-            top10.appendChild(li);
-        });
-    }
-
-    // Smooth scrolling for anchor links
+    // Smooth scrolling for navigation
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -370,6 +324,10 @@
             });
         });
     });
+
+    // Handle initial tab selection based on URL hash
+    const initialTab = window.location.hash ? window.location.hash.substring(1) : 'All';
+    renderApps(initialTab);
 </script>
 
 </body>
