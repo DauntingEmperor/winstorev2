@@ -11,7 +11,6 @@
             padding: 0;
             background-color: #f5f5f5;
             color: #333;
-            overflow-x: hidden; /* Disable horizontal scrolling */
         }
         header {
             background: linear-gradient(135deg, #0078D7, #005A9E);
@@ -64,8 +63,6 @@
         }
         .app-card img {
             max-width: 100%;
-            max-height: 200px;
-            object-fit: cover;
             border-radius: 10px;
         }
         .app-card h3 {
@@ -109,43 +106,30 @@
             background-color: rgba(0, 0, 0, 0.4);
             transition: opacity 0.3s;
         }
-        .modal.show {
-            display: block;
-        }
         .modal-content {
             background-color: #fefefe;
-            margin: 5% auto;
+            margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
-            max-width: 800px;
             border-radius: 15px;
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.3s;
         }
         .modal-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
         }
         .modal-body img {
             max-width: 100%;
-            height: auto;
             border-radius: 10px;
             margin-bottom: 10px;
-            cursor: pointer;
-            transition: transform 0.3s ease-in-out, border-radius 0.3s ease-in-out;
-        }
-        .modal-body img.expanded {
-            transform: scale(1.5);
-            border-radius: 0;
         }
         .close {
             color: #aaa;
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
-            transition: color 0.3s ease-in-out;
         }
         .close:hover,
         .close:focus {
@@ -164,8 +148,10 @@
         }
         @media (max-width: 800px) {
             .app-card {
-                width: calc(45% - 40px);
-            }
+                width: calc(45
+                            <!-- Continuation of the previous code -->
+
+% - 40px);
         }
         @media (max-width: 500px) {
             .app-card {
@@ -180,7 +166,7 @@
             width: 50%;
             padding: 10px;
             font-size: 16px;
-            border-radius: 5px;
+            border-radius: 20px;
             border: 1px solid #ccc;
             transition: box-shadow 0.3s;
         }
@@ -188,21 +174,18 @@
             box-shadow: 0 0 10px rgba(0, 120, 215, 0.5);
             outline: none;
         }
-        /* Custom scrollbars */
         ::-webkit-scrollbar {
             width: 12px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
+            background: #f1f1f1; 
         }
         ::-webkit-scrollbar-thumb {
-            background: #888;
+            background: #888; 
             border-radius: 10px;
-            transition: background-color 0.3s;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #555;
+            background: #555; 
         }
     </style>
 </head>
@@ -213,7 +196,6 @@
 </header>
 
 <nav id="navigation">
-    <!-- Navigation items will be dynamically added
     <!-- Navigation items will be dynamically added here -->
 </nav>
 
@@ -240,11 +222,9 @@
 </div>
 
 <!-- Analytics section -->
-<div class="container" id="analytics-container" style="display: none;">
-    <h2>Top 10</h2>
-    <div id="top-10" class="container">
-        <!-- Top 10 apps will be dynamically added here -->
-    </div>
+<div id="analytics" style="display: none;">
+    <h2>Top 10 Downloads</h2>
+    <ol id="top-10"></ol>
 </div>
 
 <footer>
@@ -253,13 +233,14 @@
 
 <script>
     let appsData = [];
+    let currentTab = 'All';
 
     // Fetch JSON data from the GitHub repository
     fetch('https://raw.githubusercontent.com/DauntingEmperor/winsource/main/source/v2source.json')
         .then(response => response.json())
         .then(data => {
             appsData = data;
-            renderApps('All');
+            renderApps(currentTab);
         })
         .catch(error => {
             console.error('Error fetching app data:', error);
@@ -278,9 +259,7 @@
         app.screenshots.forEach(screenshot => {
             const img = document.createElement('img');
             img.src = screenshot;
-            img.onclick = function() {
-                img.classList.toggle('expanded');
-            };
+            img.className = 'modal-screenshot';
             screenshotsContainer.appendChild(img);
         });
 
@@ -308,10 +287,10 @@
                 const appCard = document.createElement('div');
                 appCard.className = 'app-card';
                 appCard.innerHTML = `
-                    <h3>${app.name}</h3>
+                    <h3>${app.name} ${app.admin ? '<img src="shield.png" alt="Admin" style="height: 20px; width: 20px;">' : ''}</h3>
                     <img src="${app.app_icon}" alt="${app.name} icon">
                     <p>${app.description}</p>
-                    <a href="${app.download_link}" class="download-button">Download</a>
+                    <a class="download-button" href="${app.download_link}" target="_blank">Download</a>
                 `;
                 appCard.addEventListener('click', () => {
                     openModal(app);
@@ -324,6 +303,10 @@
     // Search function
     document.getElementById('search-input').addEventListener('input', (event) => {
         const query = event.target.value.toLowerCase();
+        renderSearchResults(query);
+    });
+
+    function renderSearchResults(query) {
         const appContainer = document.getElementById('app-container');
         appContainer.innerHTML = '';
         appsData.forEach(app => {
@@ -331,10 +314,10 @@
                 const appCard = document.createElement('div');
                 appCard.className = 'app-card';
                 appCard.innerHTML = `
-                    <h3>${app.name}</h3>
+                    <h3>${app.name} ${app.admin ? '<img src="shield.png" alt="Admin" style="height: 20px; width: 20px;">' : ''}</h3>
                     <img src="${app.app_icon}" alt="${app.name} icon">
                     <p>${app.description}</p>
-                    <a href="${app.download_link}" class="download-button">Download</a>
+                    <a class="download-button" href="${app.download_link}" target="_blank">Download</a>
                 `;
                 appCard.addEventListener('click', () => {
                     openModal(app);
@@ -342,32 +325,49 @@
                 appContainer.appendChild(appCard);
             }
         });
-    });
+    }
 
     // Navigation
     const tabs = ['All', 'Trending', 'Games', 'Utility', 'Other'];
     const navigation = document.getElementById('navigation');
     tabs.forEach(tab => {
         const link = document.createElement('a');
-        link.href = '#' + tab.toLowerCase();
+        link.href = `#${tab}`;
         link.textContent = tab;
-        link.addEventListener('click', (event) => {
-            event.preventDefault();
-            const tabName = event.target.textContent;
-            renderApps(tabName);
+        link.addEventListener('click', () => {
+            currentTab = tab;
+            renderApps(currentTab);
+            if (currentTab === 'Trending') {
+                document.getElementById('analytics').style.display = 'block';
+                renderTopDownloads();
+            } else {
+                document.getElementById('analytics').style.display = 'none';
+            }
         });
         navigation.appendChild(link);
     });
 
-    // Show analytics section when the tab is 'Trending'
-    window.addEventListener('hashchange', () => {
-        const hash = window.location.hash.substring(1).toLowerCase();
-        const analyticsContainer = document.getElementById('analytics-container');
-        if (hash === 'trending') {
-            analyticsContainer.style.display = 'block';
-        } else {
-            analyticsContainer.style.display = 'none';
-        }
+    // Analytics
+    function renderTopDownloads() {
+        const top10 = document.getElementById('top-10');
+        top10.innerHTML = '';
+        const sortedApps = appsData.sort((a, b) => (a.downloads < b.downloads) ? 1 : -1).slice(0, 10);
+        sortedApps.forEach(app => {
+            const li = document.createElement('li');
+            li.textContent = `${app.name} - ${app.downloads} downloads`;
+            top10.appendChild(li);
+        });
+    }
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
     });
 </script>
 
