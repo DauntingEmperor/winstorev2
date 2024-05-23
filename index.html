@@ -43,6 +43,7 @@
             flex-wrap: wrap;
             justify-content: center;
             padding: 20px;
+            overflow-y: auto;
         }
         .app-card {
             background-color: white;
@@ -65,6 +66,7 @@
         .app-card img {
             max-width: 100%;
             border-radius: 10px;
+            object-fit: contain;
         }
         .app-card h3 {
             display: flex;
@@ -115,6 +117,7 @@
             width: 80%;
             border-radius: 15px;
             transition: transform 0.3s;
+            overflow-y: auto;
         }
         .modal-header {
             display: flex;
@@ -125,6 +128,10 @@
             max-width: 100%;
             border-radius: 10px;
             margin-bottom: 10px;
+            object-fit: contain;
+        }
+        .modal-body img.onerror {
+            src: 'default-image.png';
         }
         .close {
             color: #aaa;
@@ -154,7 +161,7 @@
         }
         @media (max-width: 500px) {
             .app-card {
-                width : calc(100% - 40px);
+                width: calc(100% - 40px);
             }
         }
         .search-bar {
@@ -278,13 +285,13 @@
     <input type="text" id="search-input" placeholder="Search for apps...">
 </div>
 
-<div class="container" id="app-container">
+<div class="container custom-scrollbar" id="app-container">
     <!-- Your app cards here -->
 </div>
 
 <!-- The Modal -->
 <div id="appModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content custom-scrollbar">
         <span class="close">&times;</span>
         <div class="modal-header">
             <h3 id="modal-app-name"></h3>
