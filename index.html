@@ -258,14 +258,109 @@
             console.error('Error fetching app data:', error);
         });
 
-    // Modal functions...
-    // (Including openModal, close modal, and renderApps functions)
+    // Modal functions
+    function openModal(app) {
+        const modal = document.getElementById('appModal');
+        document.getElementById('modal-app-name').textContent = app.name;
+        document.getElementById('modal-download-link').href = app.download_link;
+        document.getElementById('modal-app-icon').src = app.app_icon;
+        document.getElementById('modal-app-description').textContent = app.description;
 
-    // Navigation...
-    // (Including smooth scrolling and initial tab selection)
+        const screenshotsContainer = document.getElementById('modal-screenshots');
+        screenshotsContainer.innerHTML = '';
+        app.screenshots.forEach(screenshot => {
+            const img = document.createElement('img');
+            img.src = screenshot;
+            screenshotsContainer.appendChild(img);
+        });
 
-    // Search function...
-    // (Including input event listener)
+        modal.style.display = 'block';
+    }
+
+    // Close the modal
+    const modal = document.getElementById('appModal');
+    const span = document.getElementsByClassName('close')[0];
+    span.onclick = function() {
+        modal.style.display = 'none';
+    }
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Render apps based on category
+    function renderApps(category) {
+        const appContainer = document.getElementById('app-container');
+        appContainer.innerHTML = '';
+        appsData.forEach(app => {
+            if (category === 'All' || app.tabs.includes(category)) {
+                const appCard = document.createElement('div');
+                appCard.className = 'app-card';
+                appCard.innerHTML = `
+                    <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px;">' : ''}</h3>
+                    <img src="${app.app_icon}" alt="${app.name} icon">
+                    <p>${app.description}</p>
+                    <a href="${app.download_link}" class="download-button">Download</a>
+                `;
+                appCard.addEventListener('click', () => {
+                    openModal(app);
+                });
+                appContainer.appendChild(appCard);
+            }
+        });
+    }
+
+    // Search function
+    document.getElementById('search-input').addEventListener('input', (event) => {
+        const query = event.target.value.toLowerCase();
+        const appContainer = document.getElementById('app-container');
+        appContainer.innerHTML = '';
+        appsData.forEach(app => {
+            if (app.name.toLowerCase().includes(query) || app.description.toLowerCase().includes(query)) {
+                const appCard = document.createElement('div');
+                appCard.className = 'app-card';
+                appCard.innerHTML = `
+                    <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px;">' : ''}</h3>
+                    <img src="${app.app_icon}" alt="${app.name} icon">
+                    <p>${app.description}</p>
+                    <a href="${app.download_link}" class="download-button">Download</a>
+                `;
+                appCard.addEventListener('click', () => {
+                    openModal(app);
+                });
+                appContainer.appendChild(appCard);
+            }
+        });
+    });
+
+    // Navigation
+    const tabs = ['All', 'Trending', 'Games', 'Utility', 'Other'];
+    const navigation = document.getElementById('navigation');
+    tabs.forEach(tab => {
+        const link = document.createElement('a');
+        link.href = `#${tab}`;
+        link.textContent = tab;
+        link.addEventListener('click', () => {
+            renderApps(tab);
+        });
+        navigation.appendChild(link);
+    });
+
+    // Smooth scrolling for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // Handle initial tab selection based on URL hash
+    const initialTab = window.location.hash ? window.location.hash.substring(1) : 'All';
+    renderApps(initialTab);
 
     // Settings dropdown functions
     function toggleThemesDropdown() {
@@ -282,6 +377,7 @@
         }
     }
 </script>
+
 
 </body>
 </html>
