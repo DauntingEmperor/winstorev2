@@ -138,7 +138,8 @@
             cursor: pointer;
         }
         footer {
-            background-color: #333;
+            background-color: #333
+;
             color: white;
             text-align: center;
             padding: 10px;
@@ -171,6 +172,35 @@
         .search-bar input:focus {
             box-shadow: 0 0 10px rgba(0, 120, 215, 0.5);
             outline: none;
+        }
+        /* Settings Menu */
+        .settings-icon {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .settings-icon:hover {
+            transform: scale(1.1);
+        }
+        .settings-modal {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .settings-modal.open {
+            display: block;
+        }
+        .settings-modal select {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
     </style>
 </head>
@@ -206,128 +236,174 @@
     </div>
 </div>
 
+<!-- Analytics section -->
+<div class="container" style="display: flex; flex-direction: column; align-items: center;">
+    <h2>Top 10</h2>
+    <div id="top-10" class="container"></div>
+</div>
+
+<!-- Settings Icon -->
+<div class="settings-icon" onclick="toggleSettings()">
+    <img src="https://png.pngtree.com/png-vector/20190116/ourmid/pngtree-vector-settings-icon-png-image_316944.jpg" alt="Settings">
+</div>
+
+<!-- Settings Modal -->
+<div id="settingsModal" class="settings-modal">
+    <select id="theme-select">
+        <option value="light">Light Mode</option>
+        <option value="dark">Dark Mode</option>
+        <option value="blood">Blood Mode</option>
+    </select>
+    <label><input type="checkbox" id="hide-admin"> Hide Admin Apps</label>
+</div>
+
 <footer>
     <p>&copy; 2024 Windows App Store. All rights reserved.</p>
 </footer>
 
 <script>
     let appsData = [];
+let currentTab = 'All';
 
-    // Fetch JSON data from the GitHub repository
-    fetch('https://raw.githubusercontent.com/DauntingEmperor/winsource/main/source/v2source.json')
-        .then(response => response.json())
-        .then(data => {
-            appsData = data;
-            renderApps('All');
-        })
-        .catch(error => {
-            console.error('Error fetching app data:', error);
-        });
+// Fetch JSON data from the GitHub repository
+fetch('https://raw.githubusercontent.com/DauntingEmperor/winsource/main/source/v2source.json')
+    .then(response => response.json())
+    .then(data => {
+        appsData = data;
+        renderApps(currentTab);
+    })
+    .catch(error => {
+        console.error('Error fetching app data:', error);
+    });
 
-    // Modal functions
-    function openModal(app) {
-        const modal = document.getElementById('appModal');
-        document.getElementById('modal-app-name').textContent = app.name;
-        document.getElementById('modal-download-link').href = app.download_link;
-        document.getElementById('modal-app-icon').src = app.app_icon;
-        document.getElementById('modal-app-description').textContent = app.description;
-
-        const screenshotsContainer = document.getElementById('modal-screenshots');
-        screenshotsContainer.innerHTML = '';
-        app.screenshots.forEach(screenshot => {
-            const img = document.createElement('img');
-            img.src = screenshot;
-            screenshotsContainer.appendChild(img);
-        });
-
-        modal.style.display = 'block';
-    }
-
-    // Close the modal
+// Modal functions
+function openModal(app) {
     const modal = document.getElementById('appModal');
-    const span = document.getElementsByClassName('close')[0];
+    document.getElementById('modal-app-name').textContent = app.name;
+    document.getElementById('modal-download-link').href = app.download_link;
+    document.getElementById('modal-app-icon').src = app.app_icon;
+    document.getElementById('modal-app-description').textContent = app.description;
+
+    const screenshotsContainer = document.getElementById('modal-screenshots');
+    screenshotsContainer.innerHTML = '';
+    app.screenshots.forEach(screenshot => {
+        const img = document.createElement('img');
+        img.src = screenshot;
+        img.onclick = function() {
+            openScreenshotModal(screenshot);
+        };
+        screenshotsContainer.appendChild(img);
+    });
+
+    modal.style.display = 'block';
+}
+
+function openScreenshotModal(screenshot) {
+    const modal = document.getElementById('screenshotModal');
+    const img = document.getElementById('screenshot-img');
+    img.src = screenshot;
+    modal.style.display = 'block';
+}
+
+// Close the modal
+const modals = document.getElementsByClassName('modal');
+for (let i = 0; i < modals.length; i++) {
+    const span = modals[i].getElementsByClassName('close')[0];
     span.onclick = function() {
-        modal.style.display = 'none';
-    }
+        modals[i].style.display = 'none';
+    };
     window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
+        if (event.target == modals[i]) {
+            modals[i].style.display = 'none';
         }
-    }
+    };
+}
 
-    // Render apps based on category
-    function renderApps(category) {
-        const appContainer = document.getElementById('app-container');
-        appContainer.innerHTML = '';
-        appsData.forEach(app => {
-            if (category === 'All' || app.tabs.includes(category)) {
-                const appCard = document.createElement('div');
-                appCard.className = 'app-card';
-                appCard.innerHTML = `
-                    <h3>${app.name}${app.admin ? '<img src="https://png.pngtree.com/png-vector/20190116/ourmid/pngtree-vector-shield-icon-png-image_322145.jpg" alt="Admin" style="width: 20px; margin-left: 5px;">' : ''}</h3>
-                    <img src="${app.app_icon}" alt="${app.name} icon">
-                    <p>${app.description}</p>
-                    <a href="${app.download_link}" class="download-button">Download</a>
-                `;
-                appCard.addEventListener('click', () => {
-                    openModal(app);
-                });
-                appContainer.appendChild(appCard);
-            }
-        });
-    }
-
-    // Search function
-    document.getElementById('search-input').addEventListener('input', (event) => {
-        const query = event.target.value.toLowerCase();
-        const appContainer = document.getElementById('app-container');
-        appContainer.innerHTML = '';
-        appsData.forEach(app => {
-            if (app.name.toLowerCase().includes(query) || app.description.toLowerCase().includes(query)) {
-                const appCard = document.createElement('div');
-                appCard.className = 'app-card';
-                appCard.innerHTML = `
-                    <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px;">' : ''}</h3>
-                    <img src="${app.app_icon}" alt="${app.name} icon
-">
-                    <p>${app.description}</p>
-                    <a href="${app.download_link}" class="download-button">Download</a>
-                `;
-                appCard.addEventListener('click', () => {
-                    openModal(app);
-                });
-                appContainer.appendChild(appCard);
-            }
-        });
-    });
-
-    // Navigation
-    const tabs = ['All', 'Trending', 'Games', 'Utility', 'Other'];
-    const navigation = document.getElementById('navigation');
-    tabs.forEach(tab => {
-        const link = document.createElement('a');
-        link.href = `#${tab}`;
-        link.textContent = tab;
-        link.addEventListener('click', () => {
-            renderApps(tab);
-        });
-        navigation.appendChild(link);
-    });
-
-    // Smooth scrolling for navigation
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
+// Render apps based on category
+function renderApps(category) {
+    const appContainer = document.getElementById('app-container');
+    appContainer.innerHTML = '';
+    appsData.forEach(app => {
+        if (category === 'All' || app.tabs.includes(category)) {
+            const appCard = document.createElement('div');
+            appCard.className = 'app-card';
+            const adminBadge = app.admin ? '<img src="https://png.pngtree.com/png-vector/20190116/ourmid/pngtree-vector-shield-icon-png-image_322145.jpg" style="width: 20px; margin-left: 10px;">' : '';
+            appCard.innerHTML = `
+                <h3>${app.name}${adminBadge}</h3>
+                <img src="${app.app_icon}" alt="${app.name} icon">
+                <p>${app.description}</p>
+                <a href="${app.download_link}" class="download-button">Download</a>
+            `;
+            appCard.addEventListener('click', () => {
+                openModal(app);
             });
-        });
+            appContainer.appendChild(appCard);
+        }
     });
+}
 
-    // Handle initial tab selection based on URL hash
-    const initialTab = window.location.hash ? window.location.hash.substring(1) : 'All';
-    renderApps(initialTab);
+// Search function
+document.getElementById('search-input').addEventListener('input', (event) => {
+    const query = event.target.value.toLowerCase();
+    renderApps(currentTab);
+    const appCards = document.querySelectorAll('.app-card');
+    appCards.forEach(card => {
+        const appName = card.querySelector('h3').textContent.toLowerCase();
+        const appDescription = card.querySelector('p').textContent.toLowerCase();
+        if (!appName.includes(query) && !appDescription.includes(query)) {
+            card.style.display = 'none';
+        } else {
+            card.style.display = 'block';
+        }
+    });
+});
+
+// Navigation
+const tabs = ['All', 'Trending', 'Games', 'Utility', 'Other'];
+const navigation = document.getElementById('navigation');
+tabs.forEach(tab => {
+    const link = document.createElement('a');
+    link.href = '#';
+    link.textContent = tab;
+    link.addEventListener('click', () => {
+        currentTab = tab;
+        renderApps(tab);
+    });
+    navigation.appendChild(link);
+});
+
+// Settings modal functions
+function toggleSettings() {
+    const settingsModal = document.getElementById('settingsModal');
+    if (settingsModal.classList.contains('open')) {
+        settingsModal.classList.remove('open');
+    } else {
+        settingsModal.classList.add('open');
+    }
+}
+
+// Apply theme based on user selection
+document.getElementById('theme-select').addEventListener('change', (event) => {
+    const selectedTheme = event.target.value;
+    document.body.className = selectedTheme;
+});
+
+// Hide admin apps based on user selection
+document.getElementById('hide-admin').addEventListener('change', (event) => {
+    const hideAdmin = event.target.checked;
+    const appCards = document.querySelectorAll('.app-card');
+    appCards.forEach(card => {
+        const adminBadge = card.querySelector('h3 img');
+        if (adminBadge) {
+            if (hideAdmin) {
+                card.style.display = 'none';
+            } else {
+                card.style.display = 'block';
+            }
+        }
+    });
+});
+
 </script>
 
 </body>
