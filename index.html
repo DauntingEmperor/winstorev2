@@ -172,6 +172,35 @@
             box-shadow: 0 0 10px rgba(0, 120, 215, 0.5);
             outline: none;
         }
+        /* Added styles for settings menu */
+        #settings-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+        }
+        #settings-dropdown {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #settings-dropdown.show {
+            display: block;
+        }
+        /* Added styles for theme select */
+        #theme-select {
+            margin-bottom: 10px;
+        }
+        /* Added styles for admin checkbox */
+        #admin-checkbox {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -194,22 +223,34 @@
 
 <!-- The Modal -->
 <div id="appModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <div class="modal-header">
-            <h3 id="modal-app-name"></h3>
-            <a id="modal-download-link" class="download-button">Download</a>
-        </div>
-        <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px;">
-        <p id="modal-app-description"></p>
-        <div id="modal-screenshots"></div>
-    </div>
+<div class="modal-content">
+<span class="close">×</span>
+<div class="modal-header">
+<h3 id="modal-app-name"></h3>
+<a id="modal-download-link" class="download-button">Download</a>
+</div>
+<img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px;">
+<p id="modal-app-description"></p>
+<div id="modal-screenshots"></div>
 </div>
 
+</div>
+<!-- Settings menu -->
+<div id="settings-menu">
+    &#9881;
+    <div id="settings-dropdown">
+        <select id="theme-select">
+            <option value="light">Light Theme</option>
+            <option value="dark">Dark Theme</option>
+        </select>
+        <br>
+        <input type="checkbox" id="admin-checkbox">
+        <label for="admin-checkbox">Show Admin Apps</label>
+    </div>
+</div>
 <footer>
     <p>&copy; 2024 Windows App Store. All rights reserved.</p>
 </footer>
-
 <script>
     let appsData = [];
 
@@ -308,26 +349,42 @@
         link.href = `#${tab}`;
         link.textContent = tab;
         link.addEventListener('click', () => {
-            renderApps(tab);
+renderApps(tab);
+});
+navigation.appendChild(link);
+});
+    // Theme and Settings menu
+const themeSelect = document.getElementById('theme-select');
+const adminCheckbox = document.getElementById('admin-checkbox');
+
+// Apply selected theme
+themeSelect.addEventListener('change', (event) => {
+    const theme = event.target.value;
+    document.body.classList.remove('light', 'dark');
+    document.body.classList.add(theme);
+});
+
+// Show/hide admin apps based on checkbox
+adminCheckbox.addEventListener('change', (event) => {
+    const showAdmin = event.target.checked;
+    const category = document.querySelector('.selected-tab').textContent;
+    renderApps(category);
+});
+
+// Smooth scrolling for navigation
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
         });
-        navigation.appendChild(link);
     });
+});
 
-    // Smooth scrolling for navigation
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-    });
-
-    // Handle initial tab selection based on URL hash
-    const initialTab = window.location.hash ? window.location.hash.substring(1) : 'All';
-    renderApps(initialTab);
+// Handle initial tab selection based on URL hash
+const initialTab = window.location.hash ? window.location.hash.substring(1) : 'All';
+renderApps(initialTab);
 </script>
-
 </body>
 </html>
