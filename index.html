@@ -293,12 +293,7 @@
 </header>
 
 <nav id="navigation">
-    <a href="#All">All</a>
-    <a href="#Trending">Trending</a>
-    <a href="#Games">Games</a>
-    <a href="#Utility">Utility</a>
-    <a href="#Emulation">Emulation</a>
-    <a href="#Other">Other</a>
+
 </nav>
 
 <div class="search-bar">
@@ -440,7 +435,7 @@
     });
 
     // Navigation
-    const tabs = [];
+    const tabs = ['All', 'Trending', 'Games', 'Utility', 'Emulation', 'Other'];
     const navigation = document.getElementById('navigation');
     tabs.forEach(tab => {
         const link = document.createElement('a');
