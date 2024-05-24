@@ -201,110 +201,134 @@
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-z-index: 2;
-}
-.settings-menu h2 {
-margin-bottom: 10px;
-}
-.settings-menu label {
-display: block;
-margin-bottom: 10px;
-}
-.settings-menu select {
-padding: 8px;
-border-radius: 5px;
-}
-.settings-menu input[type="checkbox"] {
-margin-right: 5px;
-}
-.custom-scrollbar {
-scrollbar-width: thin;
-scrollbar-color: #aaa #f5f5f5;
-}
-.custom-scrollbar::-webkit-scrollbar {
-width: 8px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-background-color: #aaa;
-border-radius: 5px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-background-color: #999;
-}
-.dark-mode {
-background-color: #333;
-color: white;
-}
-.dark-mode .search-bar input {
-background-color: #555;
-color: white;
-}
-.dark-mode .app-card {
-background-color: #444;
-color: white;
-box-shadow: 0 6px 12px rgba(255, 255, 255, 0.1);
-}
-.dark-mode .app-card:hover {
-background-color: #555;
-color: white;
-box-shadow: 0 12px 24px rgba(255, 255, 255, 0.2);
-}
-.dark-mode .download-button {
-background-color: #009688;
-}
-.dark-mode .modal-content {
-background-color: #444;
-border-color: #888;
-}
-.dark-mode .modal-body img {
-border-radius: 10px;
-border-color: #888;
-}
-.dark-mode .search-bar input {
-border-color: #888;
-}
-.dark-mode .settings-menu {
-background-color: #444;
-color: white;
-box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
-}
-.dark-mode .settings-menu label,
-.dark-mode .settings-menu h2 {
-color: white;
-}
-</style>
-
+            z-index: 2;
+        }
+        .settings-menu h2 {
+            margin-bottom: 10px;
+        }
+        .settings-menu label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .settings-menu select {
+            padding: 8px;
+            border-radius: 5px;
+        }
+        .settings-menu input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #aaa #f5f5f5;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #aaa;
+            border-radius: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: #999;
+        }
+        .dark-mode {
+            background-color: #333;
+            color: white;
+        }
+        .dark-mode .search-bar input {
+            background-color: #555;
+            color: white;
+        }
+        .dark-mode .app-card {
+            background-color: #444;
+            color: white;
+            box-shadow: 0 6px 12px rgba(255, 255, 255, 0.1);
+        }
+        .dark-mode .app-card:hover {
+            background-color: #555;
+            color: white;
+            box-shadow: 0 12px 24px rgba(255, 255, 255, 0.2);
+        }
+        .dark-mode .download-button {
+            background-color: #009688;
+        }
+        .dark-mode .modal-content {
+            background-color: #444;
+            border-color: #888;
+        }
+        .dark-mode .modal-body img {
+            border-radius: 15px;
+            border-color: #888;
+        }
+        .dark-mode .search-bar input {
+            border-color: #888;
+        }
+        .dark-mode .settings-menu {
+            background-color: #444;
+            color: white;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+        }
+        .dark-mode .settings-menu label,
+        .dark-mode .settings-menu h2 {
+            color: white;
+        }
+        .settings-menu .close-settings {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #aaa;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .settings-menu .close-settings:hover {
+            color: black;
+        }
+    </style>
 </head>
 <body>
+
 <header>
     <h1>Windows App Store</h1>
 </header>
+
 <nav id="navigation">
-    <!-- Navigation items will be dynamically added here -->
+    <a href="#All">All</a>
+    <a href="#Trending">Trending</a>
+    <a href="#Games">Games</a>
+    <a href="#Utility">Utility</a>
+    <a href="#Emulation">Emulation</a>
+    <a href="#Other">Other</a>
 </nav>
-<div class="search-bar custom-scrollbar">
+
+<div class="search-bar">
     <input type="text" id="search-input" placeholder="Search for apps...">
 </div>
-<div class="container" id="app-container">
+
+<div class="container custom-scrollbar" id="app-container">
     <!-- Your app cards here -->
 </div>
+
 <!-- The Modal -->
 <div id="appModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content custom-scrollbar">
         <span class="close">&times;</span>
         <div class="modal-header">
             <h3 id="modal-app-name"></h3>
             <a id="modal-download-link" class="download-button">Download</a>
         </div>
-        <img id="modal-app-icon" src="" alt="App Icon" style="border-radius: 15px; max-width: 100%; object-fit: contain;">
+        <img id="modal-app-icon" src="" alt="App Icon" style="float:left; margin-right: 20px; border-radius: 15px;">
         <p id="modal-app-description"></p>
         <div id="modal-screenshots"></div>
     </div>
 </div>
+
 <div class="settings-icon" onclick="toggleSettings()">
     <img src="https://raw.githubusercontent.com/DauntingEmperor/winsource/main/Resources/unnamed-removebg-preview%20(1).png" alt="Settings">
 </div>
+
 <div id="settingsMenu" class="settings-menu custom-scrollbar">
+    <span class="close-settings" onclick="toggleSettings()">&#10006;</span>
     <h2>Settings</h2>
     <label for="theme">Theme:</label>
     <select id="theme" onchange="changeTheme()">
@@ -313,11 +337,12 @@ color: white;
     </select>
     <label for="hideAdmin">Hide Admin Apps:</label>
     <input type="checkbox" id="hideAdmin" onchange="toggleAdminApps()">
-    <span class="close-settings" onclick="toggleSettings()">&times;</span>
 </div>
+
 <footer>
     <p>&copy; 2024 Windows App Store. All rights reserved.</p>
 </footer>
+
 <script>
     let appsData = [];
     let darkMode = false;
@@ -346,9 +371,7 @@ color: white;
         app.screenshots.forEach(screenshot => {
             const img = document.createElement('img');
             img.src = screenshot;
-            img.onerror = function() {
-                this.src = 'default-image.png';
-            };
+            img.onerror = () => { img.src = 'default-image.png'; }
             screenshotsContainer.appendChild(img);
         });
 
@@ -360,12 +383,12 @@ color: white;
     const span = document.getElementsByClassName('close')[0];
     span.onclick = function() {
         modal.style.display = 'none';
-    };
+    }
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = 'none';
         }
-    };
+    }
 
     // Render apps based on category
     function renderApps(category) {
@@ -376,10 +399,12 @@ color: white;
                 if (!(document.getElementById('hideAdmin').checked && app.admin)) {
                     const appCard = document.createElement('div');
                     appCard.className = 'app-card';
-                    appCard.innerHTML = `<h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px;">' : ''}</h3>
+                    appCard.innerHTML = `
+                        <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px; border-radius: 15px;">' : ''}</h3>
                         <img src="${app.app_icon}" alt="${app.name} icon">
                         <p>${app.description}</p>
-                        <a href="${app.download_link}" class="download-button">Download</a>`;
+                        <a href="${app.download_link}" class="download-button">Download</a>
+                    `;
                     appCard.addEventListener('click', () => {
                         openModal(app);
                     });
@@ -396,22 +421,27 @@ color: white;
         appContainer.innerHTML = '';
         appsData.forEach(app => {
             if (app.name.toLowerCase().includes(query) || app.description.toLowerCase().includes(query)) {
-if (!(document.getElementById('hideAdmin').checked && app.admin)) {
-const appCard = document.createElement('div');
-appCard.className = 'app-card';
-appCard.innerHTML = <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px;">' : ''}</h3> <img src="${app.app_icon}" alt="${app.name} icon"> <p>${app.description}</p> <a href="${app.download_link}" class="download-button">Download</a> ;
-appCard.addEventListener('click', () => {
-openModal(app);
-});
-appContainer.appendChild(appCard);
-}
-}
-});
-});
+                if (!(document.getElementById('hideAdmin').checked && app.admin)) {
+                    const appCard = document.createElement('div');
+                    appCard.className = 'app-card';
+                    appCard.innerHTML = `
+                        <h3>${app.name}${app.admin ? '<img src="shield-icon.png" alt="Admin" style="width: 20px; margin-left: 5px; border-radius: 15px;">' : ''}</h3>
+                        <img src="${app.app_icon}" alt="${app.name} icon">
+                        <p>${app.description}</p>
+                        <a href="${app.download_link}" class="download-button">Download</a>
+                    `;
+                    appCard.addEventListener('click', () => {
+                        openModal(app);
+                    });
+                    appContainer.appendChild(appCard);
+                }
+            }
+        });
+    });
+
     // Navigation
-const tabs = ['All', 'Trending', 'Games', 'Utility', 'Emulation', 'Other'];
-const navigation = document.getElementById('navigation');
-if (navigation.children.length === 0) {
+    const tabs = [];
+    const navigation = document.getElementById('navigation');
     tabs.forEach(tab => {
         const link = document.createElement('a');
         link.href = `#${tab}`;
@@ -421,62 +451,46 @@ if (navigation.children.length === 0) {
         });
         navigation.appendChild(link);
     });
-}
 
-// Smooth scrolling for navigation
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
+    // Smooth scrolling for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
 
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
         });
     });
-});
 
-// Handle initial tab selection based on URL hash
-const initialTab = window.location.hash ? window.location.hash.substring(1) : 'All';
-renderApps(initialTab);
+    // Handle initial tab selection based on URL hash
+    const initialTab = window.location.hash ? window.location.hash.substring(1) : 'All';
+    renderApps(initialTab);
 
-// Toggle Settings menu
-function toggleSettings() {
-    const settingsMenu = document.getElementById('settingsMenu');
-    settingsMenu.style.display = settingsMenu.style.display === 'none' ? 'block' : 'none';
-}
-
-// Change theme
-function changeTheme() {
-    const theme = document.getElementById('theme').value;
-    if (theme === 'dark') {
-        document.body.classList.add('dark-mode');
-        darkMode = true;
-    } else {
-        document.body.classList.remove('dark-mode');
-        darkMode = false;
+    // Toggle Settings menu
+    function toggleSettings() {
+        const settingsMenu = document.getElementById('settingsMenu');
+        settingsMenu.style.display = settingsMenu.style.display === 'none' ? 'block' : 'none';
     }
-    // Save theme preference to local storage
-    localStorage.setItem('theme', theme);
-}
 
-// Toggle Admin Apps visibility
-function toggleAdminApps() {
-    const hideAdmin = document.getElementById('hideAdmin').checked;
-    renderApps('All');
-    // Save hide admin apps preference to local storage
-    localStorage.setItem('hideAdmin', hideAdmin);
-}
+    // Change theme
+    function changeTheme() {
+        const theme = document.getElementById('theme').value;
+        if (theme === 'dark') {
+            document.body.classList.add('dark-mode');
+            darkMode = true;
+        } else {
+            document.body.classList.remove('dark-mode');
+            darkMode = false;
+        }
+    }
 
-// Check local storage for theme and hide admin apps preferences
-const storedTheme = localStorage.getItem('theme');
-const storedHideAdmin = localStorage.getItem('hideAdmin');
-if (storedTheme) {
-    document.getElementById('theme').value = storedTheme;
-    changeTheme();
-}
-if (storedHideAdmin) {
-    document.getElementById('hideAdmin').checked = storedHideAdmin === 'true';
-    toggleAdminApps();
-}
+    // Toggle Admin Apps visibility
+    function toggleAdminApps() {
+        const hideAdmin = document.getElementById('hideAdmin').checked;
+        renderApps('All');
+    }
 </script>
+
 </body>
 </html>
